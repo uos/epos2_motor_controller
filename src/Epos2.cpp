@@ -287,7 +287,6 @@ void CEpos2::sendFrame(unsigned int *frame)
 {
   unsigned char trans_frame[80];                  // transmission frame
   unsigned int length = ((frame[0] & 0xFF00) >> 8 ) + 2;   // frame length
-  unsigned int checksum;
 
   // Add checksum to the frame
   frame[length-1] = this->computeChecksum(frame,length);
@@ -297,7 +296,7 @@ void CEpos2::sendFrame(unsigned int *frame)
   trans_frame[1] = 0x02;
 
   // Stuffing
-  char i=0, tf_i=2;
+  unsigned char i=0, tf_i=2;
   while( i < length )
   {
       // LSB
@@ -322,7 +321,7 @@ void CEpos2::sendFrame(unsigned int *frame)
 
   // write transmission frame
   try{
-    int bytes = this->comm_dev->write(trans_frame, tf_i);
+    //int bytes = this->comm_dev->write(trans_frame, tf_i);
     //printf("bytes written: %d\n",bytes);
 
   }catch(CFTDIException &e)
@@ -1106,7 +1105,7 @@ void CEpos2::startProfilePosition(epos_posmodes mode, bool blocking, bool wait, 
 
 // Current
 
-long CEpos2::getTargetCurrent(){}
+long CEpos2::getTargetCurrent(){return 1;}
 
 void CEpos2::setTargetCurrent(long current){}
 
@@ -1801,7 +1800,7 @@ char CEpos2::readError()
 	if(bits[1]) error_num=1; // Current Error
 	if(bits[0]) error_num=0; // Generic Error
 
-  s << "Error: "<< error_num << " " << this->error_names[error_num] <<
+  s << "Error: "<< error_num << " " << this->error_names[(unsigned char)error_num] <<
       " Value: 0x" <<std::hex<< ans << " , " <<std::dec<< ans;
   p(s);
 
@@ -1846,6 +1845,7 @@ std::string CEpos2::searchErrorDescription(long error_code)
 		}
 	}
 	if(!found) return "No Description for this error";
+	else       return "Error Description";
 }
 
 //----------------------------------------------------------------------------
@@ -1878,19 +1878,19 @@ long CEpos2::readVersionHardware()
 
 	// SENSOR CONFIGURATION
 
-long CEpos2::getEncoderPulseNumber(){}
+long CEpos2::getEncoderPulseNumber(){return 1;}
 
 void CEpos2::setEncoderPulseNumber(long pulses)
 {}
 
 long CEpos2::getEncoderType()
-{}
+{return 1;}
 
 void CEpos2::setEncoderType(long type)
 {}
 
 long CEpos2::getEncoderPolarity()
-{}
+{return 1;}
 
 void CEpos2::setEncoderPolarity(long polarity)
 {}
@@ -1903,23 +1903,23 @@ void CEpos2::setEncoderParameters(long pulses, long type, long polarity)
 
 // Motor
 
-long CEpos2::getMotorType(){}
+long CEpos2::getMotorType(){return 1;}
 
 void CEpos2::setMotorType(long type){}
 
-long CEpos2::getMotorContinuousCurrentLimit(){}
+long CEpos2::getMotorContinuousCurrentLimit(){return 1;}
 
 void CEpos2::setMotorContinuousCurrentLimit(long current_mA){}
 
-long CEpos2::getMotorOutputCurrentLimit(){}
+long CEpos2::getMotorOutputCurrentLimit(){return 1;}
 
 void CEpos2::setMotorOutputCurrentLimit(long current_mA){}
 
-long CEpos2::getMotorPolePairNumber(){}
+long CEpos2::getMotorPolePairNumber(){return 1;}
 
 void CEpos2::setMotorPolePairNumber(char pole_pairs){}
 
-long CEpos2::getThermalTimeCtWinding(){}
+long CEpos2::getThermalTimeCtWinding(){return 1;}
 
 void CEpos2::setThermalTimeCtWinding(long time_ds){}
 
@@ -1986,43 +1986,43 @@ void CEpos2::disablePositionLimits(void)
   this->writeObject(0x607D, 0x02, 2147483647);
 }
 
-long CEpos2::getPositionWindow(){}
+long CEpos2::getPositionWindow(){return 1;}
 
 void CEpos2::setPositionWindow(long window_qc){}
 
-long CEpos2::getPositionWindowTime(){}
+long CEpos2::getPositionWindowTime(){return 1;}
 
 void CEpos2::setPositionWindowTime(long time_ms){}
 
-long CEpos2::getVelocityWindow(){}
+long CEpos2::getVelocityWindow(){return 1;}
 
 void CEpos2::setVelocityWindow(long window_rm){}
 
-long CEpos2::getVelocityWindowTime(){}
+long CEpos2::getVelocityWindowTime(){return 1;}
 
 void CEpos2::setVelocityWindowTime(long time_ms){}
 
-long CEpos2::getPositionNotationIndex(){}
+long CEpos2::getPositionNotationIndex(){return 1;}
 
 void CEpos2::setPositionNotationIndex(long notation){}
 
-long CEpos2::getVelocityNotationIndex(){}
+long CEpos2::getVelocityNotationIndex(){return 1;}
 
 void CEpos2::setVelocityNotationIndex(long notation){}
 
-long CEpos2::getAccelerationNotationIndex(){}
+long CEpos2::getAccelerationNotationIndex(){return 1;}
 
 void CEpos2::setAccelerationNotationIndex(long notation){}
 
-long CEpos2::getPositionDimensionIndex(){}
+long CEpos2::getPositionDimensionIndex(){return 1;}
 
 void CEpos2::setPositionDimensionIndex(long Dimension){}
 
-long CEpos2::getVelocityDimensionIndex(){}
+long CEpos2::getVelocityDimensionIndex(){return 1;}
 
 void CEpos2::setVelocityDimensionIndex(long Dimension){}
 
-long CEpos2::getAccelerationDimensionIndex(){}
+long CEpos2::getAccelerationDimensionIndex(){return 1;}
 
 void CEpos2::setAccelerationDimensionIndex(long Dimension){}
 
@@ -2096,7 +2096,7 @@ long CEpos2::getNegativeLong(long positiu)
 
 // #############################   I/O   ######################################
 
-long CEpos2::getAnalogOutput1(){}
+long CEpos2::getAnalogOutput1(){return 1;}
 
 void CEpos2::setAnalogOutput1(long voltage_mV){}
 
