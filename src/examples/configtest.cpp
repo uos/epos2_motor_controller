@@ -197,7 +197,6 @@ void doMovement(char type){
 			cout << "\n    Profile Position Movement Finished" << endl;
 			break;
 		case 'w':
-			char ui_w_stop;
 			int wcounter;
       epos2->setOperationMode(epos2->PROFILE_VELOCITY);
 			epos2->setTargetProfileVelocity(value);
@@ -216,7 +215,6 @@ void doMovement(char type){
 			break;
 		case 'v':
 			char ui_v_stop;
-      long pos0,pos2;
       epos2->setOperationMode(epos2->VELOCITY);
 			epos2->setTargetVelocity((int)value);
 			epos2->startVelocity();
@@ -319,8 +317,6 @@ void throwAction(char action)
 			break;
 		case 'h':
       cout << "  ConfigTest  Set Home\n\n";
-			char fi;
-			long int pos;
 			epos2->setHome();
 			break;
    break;

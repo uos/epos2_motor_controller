@@ -38,7 +38,7 @@ int main(void){
 
 	cout << "Epos2 Positions:" << endl;
 
-  long pos,pos_marker=0,pos_marker_old=0;
+  long pos_marker=0,pos_marker_old=0;
 	CTime tavg;
 
 	try{
@@ -51,7 +51,6 @@ int main(void){
     controller.setOperationMode(controller.VELOCITY);
 
     CTime tbase,telapsed;
-    double avg=0,total_avg=0,max_avg=0,min_avg=0;
     int experiment_duration = 10, vel = 1000;
     bool primera = true;
 

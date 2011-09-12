@@ -58,7 +58,7 @@ int main(void){
     // start the movement
     controller.startVelocity();
     CTime tbase,telapsed,t0,t1,tavg;
-    long pos,vel;
+    long pos=0,vel=0;
     double avg=0,total_avg=0,max_avg=0,min_avg=0;
     stringstream text;
     int k=0;

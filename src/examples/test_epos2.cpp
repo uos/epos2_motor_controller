@@ -72,7 +72,6 @@ using namespace std;
 int main(void){
 
 	CEpos2 controller;
-	int *errors;
 
   cout << "\n EPOS2 EXAMPLE" << endl;
 
