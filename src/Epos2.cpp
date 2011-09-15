@@ -321,7 +321,7 @@ void CEpos2::sendFrame(unsigned int *frame)
 
   // write transmission frame
   try{
-    //int bytes = this->comm_dev->write(trans_frame, tf_i);
+    int bytes = this->comm_dev->write(trans_frame, tf_i);
     //printf("bytes written: %d\n",bytes);
 
   }catch(CFTDIException &e)
