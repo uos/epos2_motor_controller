@@ -69,11 +69,11 @@ int main(void){
 
       t0.set();
       pos = controller.readPosition();
-      t1.set();
-      //vel = controller.readVelocity();
 
+      vel = controller.readVelocity();
+t1.set();
       tavg = t1-t0;
-      avg = tavg.getTimeInMilliseconds();
+      avg = tavg.getTimeInSeconds();
 
       if(total_avg==0)
         total_avg = avg;
@@ -87,7 +87,7 @@ int main(void){
       telapsed = telapsed - tbase;
 
       text.str("");
-      text << telapsed << " " << pos << " " << vel;
+      text << telapsed << " " << avg << " " << pos << " " << vel;
       john.log(text.str().c_str()) ;
 
       if(pos <0){
@@ -101,7 +101,7 @@ int main(void){
         k++;
       }
 
-    }while( telapsed.getTimeInSeconds() < 10*60 );
+    }while( telapsed.getTimeInSeconds() < 20); //20*60 );
 
 
     controller.stopVelocity();

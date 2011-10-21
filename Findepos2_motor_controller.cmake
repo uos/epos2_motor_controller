@@ -3,7 +3,7 @@ FIND_PATH(epos2_motor_controller_INCLUDE_DIR Epos2.h epos2exceptions.h /usr/incl
 
 FIND_LIBRARY(epos2_motor_controller_LIBRARY
     NAMES epos2_motor_controller
-    PATHS /usr/lib /usr/local/lib /usr/local/lib/iridrivers) 
+    PATHS /usr/lib/iridrivers /usr/local/lib /usr/local/lib/iridrivers) 
 
 IF (epos2_motor_controller_INCLUDE_DIR AND epos2_motor_controller_LIBRARY)
    SET(epos2_motor_controller_FOUND TRUE)

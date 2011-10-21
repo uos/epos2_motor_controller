@@ -222,8 +222,11 @@ long CEpos2::readObject(int index, char subindex)
   req_frame[3] = 0x0000;     // CRC
 
   try{
-    sendFrame(req_frame);
-    receiveFrame(ans_frame);
+    this->sendFrame(req_frame);
+
+    //printf("RF: %.2X %.2X %.2X %.2X\n",req_frame[0],req_frame[1],req_frame[2],req_frame[3]);
+
+    this->receiveFrame(ans_frame);
 
 
 //printf("AF: %.2X %.2X %.2X %.2X\n",ans_frame[0],ans_frame[1],ans_frame[2],ans_frame[3]);
@@ -235,7 +238,7 @@ long CEpos2::readObject(int index, char subindex)
     else
       result = (ans_frame[3] << 16) | ans_frame[2];
 
-//     printf("result: %d\n",result);
+  //   printf("result: %d\n",result);
 
   }catch(CException &e)
   {
@@ -263,8 +266,8 @@ long CEpos2::writeObject(int index, char subindex, long data)
   req_frame[5] = 0x0000;     // checksum
 
   try{
-    sendFrame(req_frame);
-    receiveFrame(ans_frame);
+    this->sendFrame(req_frame);
+    this->receiveFrame(ans_frame);
 
     // if 0x8090, its 16 bit answer else is 32 bit
     if(ans_frame[3]==0x8090)
@@ -321,7 +324,7 @@ void CEpos2::sendFrame(unsigned int *frame)
 
   // write transmission frame
   try{
-    int bytes = this->comm_dev->write(trans_frame, tf_i);
+    this->comm_dev->write(trans_frame, tf_i);
     //printf("bytes written: %d\n",bytes);
 
   }catch(CFTDIException &e)

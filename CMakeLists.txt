@@ -12,7 +12,13 @@ PROJECT(epos2_motor_controller)
 
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib)
-SET(CMAKE_INSTALL_PREFIX /usr/local)
+IF ("${INSTALL_DIR}" STREQUAL "")
+   MESSAGE ("[INSTALL] set install_dir to /usr/local")
+    SET(CMAKE_INSTALL_PREFIX /usr/local)
+  ELSE ()
+     MESSAGE ("[INSTALL] set install_dir to input ${INSTALL_DIR}")
+     SET(CMAKE_INSTALL_PREFIX ${INSTALL_DIR})
+ENDIF ()
 
 IF (NOT CMAKE_BUILD_TYPE)
  SET(CMAKE_BUILD_TYPE "DEBUG") 
@@ -85,21 +91,21 @@ ELSE(UNIX)
   )
 ENDIF(UNIX)
 
-
 IF (UNIX)
-  SET(CPACK_PACKAGE_FILE_NAME "iri-${PROJECT_NAME}-dev-${CPACK_PACKAGE_VERSION}${DISTRIB}${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
-  SET(CPACK_PACKAGE_NAME "iri-${PROJECT_NAME}-dev")
-  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Part of IRI-laboratory libraries. More information at http://wikiri.upc.es/index.php/Robotics_Lab")
-  SET(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
-  SET(CPACK_GENERATOR "DEB")
-  SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "labrobotica@iri.upc.edu")
-  SET(CPACK_SET_DESTDIR "ON")  # Necessary because of the absolute install paths
+ SET(CPACK_PACKAGE_FILE_NAME "iri-${PROJECT_NAME}-dev-${CPACK_PACKAGE_VERSION}${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+ SET(CPACK_PACKAGE_NAME "iri-${PROJECT_NAME}-dev")
+ SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Part of IRI-laboratory libraries. More information at http://wikiri.upc.es/index.php/Robotics_Lab")
+ SET(CPACK_PACKAGING_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+ SET(CPACK_GENERATOR "DEB")
+ SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "galenya - labrobotica@iri.upc.edu")
+ SET(CPACK_SET_DESTDIR "ON")  # Necessary because of the absolute install paths
+ SET(CPACK_DEBIAN_PACKAGE_DEPENDS "iri-iriutils-dev (>= 1.0~${DISTRIB}), iri-comm-dev (>= 1.0~${DISTRIB})")
 
-  INCLUDE(CPack)
+ INCLUDE(CPack)
 ELSE(UNIX)
-  ADD_CUSTOM_COMMAND(
-    COMMENT "packaging only implemented in unix"
-    TARGET  uninstall
-  )
+ ADD_CUSTOM_COMMAND(
+   COMMENT "packaging only implemented in unix"
+   TARGET  uninstall
+)
 ENDIF(UNIX)
 
