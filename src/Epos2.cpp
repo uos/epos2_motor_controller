@@ -254,8 +254,8 @@ long CEpos2::readObject(int index, char subindex)
 long CEpos2::writeObject(int index, char subindex, long data)
 {
   long result = 0;
-  unsigned int req_frame[6];
-  unsigned int ans_frame[40];
+  unsigned int req_frame[6]={0,0,0,0,0,0};
+  unsigned int ans_frame[40]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   char node_id = 0x00;
 
   req_frame[0] = 0x0411;     // header (LEN,OPCODE)
