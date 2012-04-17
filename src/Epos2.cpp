@@ -363,7 +363,7 @@ void CEpos2::receiveFrame(unsigned int* ans_frame)
 
     // get data packet
     do{
-      e_s->wait_all(data_arrived,1000);
+      e_s->wait_all(data_arrived,100);
 
       read_desired = this->comm_dev->get_num_data();
 

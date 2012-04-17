@@ -41,7 +41,7 @@ int main(void){
 
 	cout << "Epos2 Like H3D:" << endl;
 
-
+  double avg=0,total_avg=0,max_avg=0,min_avg=0;
 
 	try{
 
@@ -59,7 +59,6 @@ int main(void){
     controller.startVelocity();
     CTime tbase,telapsed,t0,t1,tavg;
     long pos=0,vel=0;
-    double avg=0,total_avg=0,max_avg=0,min_avg=0;
     stringstream text;
     int k=0;
 
@@ -71,7 +70,7 @@ int main(void){
       pos = controller.readPosition();
 
       vel = controller.readVelocity();
-t1.set();
+      t1.set();
       tavg = t1-t0;
       avg = tavg.getTimeInSeconds();
 
@@ -101,15 +100,10 @@ t1.set();
         k++;
       }
 
-    }while( telapsed.getTimeInSeconds() < 20); //20*60 );
+    }while( telapsed.getTimeInSeconds() < 2*60); //20*60 );
 
 
     controller.stopVelocity();
-
-    cout <<
-        " t avg: " << total_avg <<
-        " t min: " << min_avg <<
-        " t max: " << max_avg << endl;
 
     controller.close();
 
@@ -117,6 +111,11 @@ t1.set();
     controller.close();
 		cout << e.what() << endl;
 	}
+
+	cout <<
+        " t avg: " << total_avg <<
+        " t min: " << min_avg <<
+        " t max: " << max_avg << endl;
 
 	return 1;
 
