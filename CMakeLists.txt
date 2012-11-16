@@ -31,12 +31,12 @@ ADD_SUBDIRECTORY(src)
 
 FIND_PACKAGE(Doxygen)
 
-FIND_PATH(IRI_DOC_DIR doxygen.conf ${CMAKE_SOURCE_DIR}/doc/iri_doc/)
-IF (IRI_DOC_DIR)
-  ADD_CUSTOM_TARGET (doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doc/iri_doc/doxygen.conf)
-ELSE (IRI_DOC_DIR)
-  ADD_CUSTOM_TARGET (doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doc/doxygen.conf)
-ENDIF (IRI_DOC_DIR)
+#FIND_PATH(IRI_DOC_DIR doxygen.conf ${CMAKE_SOURCE_DIR}/doc/iri_doc/)
+#IF (IRI_DOC_DIR)
+#  ADD_CUSTOM_TARGET (doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doc/iri_doc/doxygen.conf)
+#ELSE (IRI_DOC_DIR)
+#  ADD_CUSTOM_TARGET (doc ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/doc/doxygen.conf)
+#ENDIF (IRI_DOC_DIR)
 
 ADD_CUSTOM_TARGET (distclean @echo cleaning cmake files)
 
