@@ -81,13 +81,16 @@ int main(void){
     // Initiate an EPOS 2 controller
     controller.setVerbose(true);
 
+    cout << "\n  Example : Init\n" << endl;
     controller.init();
 
     // enable motor in velocity mode
+    cout << "\n  Example : Enable Controller\n" << endl;
     controller.enableController();
     cout << "\n  Example : GREEN LED blinking (controller enabled)\n" << endl;
     sleep(2);
 
+    cout << "\n  Example : Enable Motor\n" << endl;
     controller.enableMotor(controller.VELOCITY);
     cout << "\n  Example : GREEN LED on (motor enabled)\n" << endl;
 

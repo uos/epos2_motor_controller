@@ -149,7 +149,7 @@ class CEpos2 {
      *  \param subindex hexadecimal value of the object (usually 0x00)
      *  \return the value in the object as a long
      */
-    long readObject(int index, char subindex);
+    int32_t readObject(int16_t index, int8_t subindex);
 
     /**
      * \brief function to write an object to the EPOS2
@@ -161,7 +161,7 @@ class CEpos2 {
      *  \param data information to send
      *  \return returned value by write
      */
-    long writeObject(int index, char subindex, long data);
+    int writeObject(int16_t index, int8_t subindex, int32_t data);
 
     /**
      * \brief function send a frame to EPOS2
@@ -171,7 +171,7 @@ class CEpos2 {
      *
      *  \param frame data frame which will be sent to EPOS2
      */
-    void sendFrame(unsigned int *frame);
+    void sendFrame(int16_t *frame);
 
     /**
      * \brief function receive a frame from EPOS2
@@ -184,7 +184,7 @@ class CEpos2 {
      *
      *  \param frame data frame which will be saved from EPOS2
      */
-    void receiveFrame(unsigned int* ans_frame);
+    void receiveFrame(uint16_t* ans_frame);
 
     /**
      * \brief function to compute EPOS2 checksum
@@ -195,7 +195,7 @@ class CEpos2 {
      *  \param numberOfWords
      *  \return checksum (16 bits)
      */
-    unsigned int computeChecksum(unsigned int *pDataArray, unsigned int numberOfWords);
+    int16_t computeChecksum(int16_t *pDataArray, int16_t numberOfWords);
 
 
 ///@}
@@ -1123,7 +1123,7 @@ class CEpos2 {
 		 *
 		 *  \return actual current
 		 */
-		long readPosition		();
+		int32_t readPosition		();
 
     	/**
 		 * \brief function to read EPOS2 StatusWord

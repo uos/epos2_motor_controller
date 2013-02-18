@@ -67,9 +67,10 @@ int main(void){
     do{
 
       t0.set();
+      //cout << "pos" << endl;
       pos = controller.readPosition();
-
-      vel = controller.readVelocity();
+      cout << pos << endl;
+      //vel = controller.readVelocity();
       t1.set();
       tavg = t1-t0;
       avg = tavg.getTimeInSeconds();
@@ -85,23 +86,24 @@ int main(void){
       telapsed.set();
       telapsed = telapsed - tbase;
 
-      text.str("");
-      text << telapsed << " " << avg << " " << pos << " " << vel;
-      john.log(text.str().c_str()) ;
+      //text.str("");
+      //cout << telapsed << " " << avg << " " << pos << " " << vel << endl;
+      //john.log(text.str().c_str()) ;
 
-      if(pos <0){
+      /*if(pos <0){
         cout << text.str() << endl;
         break;
       }
-
+      */
       if( telapsed.getTimeInSeconds() > 5*k )
       {
         cout << telapsed << endl;
         k++;
       }
 
-    }while( telapsed.getTimeInSeconds() < 2*60); //20*60 );
-
+    }while( telapsed.getTimeInSeconds() < 1*60); //20*60 );
+    
+    cout << "End" << endl;
 
     controller.stopVelocity();
 

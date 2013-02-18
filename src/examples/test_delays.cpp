@@ -38,9 +38,6 @@ int main(void){
 
 	cout << "Epos2 Delay:" << endl;
 
-  long pos;
-	CTime tavg;
-
 	try{
 
     controller.init();
@@ -60,7 +57,7 @@ int main(void){
     do{
 
       t0.set();
-      pos = controller.readPosition();
+      controller.readPosition();
       t1.set();
       avg = (t1-t0).getTimeInMilliseconds();
       if(total_avg==0)

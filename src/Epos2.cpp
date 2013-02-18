@@ -38,8 +38,6 @@ CEpos2::CEpos2(std::string id)
   std::stringstream ts_id;
   ts_id << "_" << start_time;
 
-  //this->events = CEventServer::instance();
-  //this->events = CEventServer::instance();
   this->threads = CThreadServer::instance();
   this->target_reached_thread_id = "target_reached_" + id + ts_id.str();
   this->position_marked_thread_id = "position_marked_" + id + ts_id.str();
@@ -77,6 +75,7 @@ void CEpos2::init()
   p("init()");
 
   this->openDevice();
+  p("readStatusWord()");  
   try{
     this->readStatusWord();
   }catch(CException &e)
@@ -209,28 +208,29 @@ void CEpos2::openDevice()
 //     READ OBJECT
 // ----------------------------------------------------------------------------
 
-long CEpos2::readObject(int index, char subindex)
+int32_t CEpos2::readObject(int16_t index, int8_t subindex)
 {
-  long result = 0;
-  unsigned int req_frame[4];
-  unsigned int ans_frame[4];
-  char node_id = 0x00;
+  int32_t result = 0x00000000;
+  int16_t req_frame[4];
+  uint16_t ans_frame[4];
+  int8_t  node_id = 0x00; // TODO attribute of the class
 
   req_frame[0] = 0x0210;     // header (LEN,OPCODE)
   req_frame[1] = index;      // data
-  req_frame[2] = ((0x0000 | node_id) << 8) | subindex;
+  req_frame[2] = ((0x0000 | node_id) << 8) | subindex; // node_id subindex
   req_frame[3] = 0x0000;     // CRC
 
   try{
+    
+    //p("readObject: sendFrame");
     this->sendFrame(req_frame);
 
     //printf("RF: %.2X %.2X %.2X %.2X\n",req_frame[0],req_frame[1],req_frame[2],req_frame[3]);
 
+    //p("readObject: receiveFrame");
     this->receiveFrame(ans_frame);
 
-
-//printf("AF: %.2X %.2X %.2X %.2X\n",ans_frame[0],ans_frame[1],ans_frame[2],ans_frame[3]);
-
+    //printf("AF: %.2X %.2X %.2X %.2X\n",ans_frame[0],ans_frame[1],ans_frame[2],ans_frame[3]);
 
     // if 0x8090, its 16 bit answer else is 32 bit
     if(ans_frame[3]==0x8090)
@@ -238,10 +238,11 @@ long CEpos2::readObject(int index, char subindex)
     else
       result = (ans_frame[3] << 16) | ans_frame[2];
 
-  //   printf("result: %d\n",result);
+    //printf("result: %d %d -> %d\n",ans_frame[3],ans_frame[2],result);
 
   }catch(CException &e)
   {
+    std::cout << "ERROR: " << e.what() <<std::endl;
     throw CEpos2Exception(_HERE_, "read object error" );
   }
 
@@ -251,12 +252,12 @@ long CEpos2::readObject(int index, char subindex)
 //     WRITE OBJECT
 // ----------------------------------------------------------------------------
 
-long CEpos2::writeObject(int index, char subindex, long data)
+int32_t CEpos2::writeObject(int16_t index, int8_t subindex, int32_t data)
 {
-  long result = 0;
-  unsigned int req_frame[6]={0,0,0,0,0,0};
-  unsigned int ans_frame[40]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  char node_id = 0x00;
+  int32_t result = 0;
+  int16_t req_frame[6]={0,0,0,0,0,0};
+  uint16_t ans_frame[40]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  int8_t node_id = 0x00;
 
   req_frame[0] = 0x0411;     // header (LEN,OPCODE)
   req_frame[1] = index;      // data
@@ -286,10 +287,10 @@ long CEpos2::writeObject(int index, char subindex, long data)
 //     SEND FRAME
 // ----------------------------------------------------------------------------
 
-void CEpos2::sendFrame(unsigned int *frame)
+void CEpos2::sendFrame(int16_t *frame)
 {
-  unsigned char trans_frame[80];                  // transmission frame
-  unsigned int length = ((frame[0] & 0xFF00) >> 8 ) + 2;   // frame length
+  uint8_t trans_frame[80];                  // transmission frame
+  int16_t length = ((frame[0] & 0xFF00) >> 8 ) + 2;   // frame length
 
   // Add checksum to the frame
   frame[length-1] = this->computeChecksum(frame,length);
@@ -299,7 +300,7 @@ void CEpos2::sendFrame(unsigned int *frame)
   trans_frame[1] = 0x02;
 
   // Stuffing
-  unsigned char i=0, tf_i=2;
+  int8_t i=0, tf_i=2;
   while( i < length )
   {
       // LSB
@@ -324,6 +325,7 @@ void CEpos2::sendFrame(unsigned int *frame)
 
   // write transmission frame
   try{
+    //p("sendFrame: write comm");
     this->comm_dev->write(trans_frame, tf_i);
     //printf("bytes written: %d\n",bytes);
 
@@ -337,7 +339,7 @@ void CEpos2::sendFrame(unsigned int *frame)
 //     RECEIVE FRAME
 // ----------------------------------------------------------------------------
 
-void CEpos2::receiveFrame(unsigned int* ans_frame)
+void CEpos2::receiveFrame(uint16_t* ans_frame)
 {
   // events
   CEventServer *e_s = CEventServer::instance();
@@ -354,9 +356,9 @@ void CEpos2::receiveFrame(unsigned int* ans_frame)
   bool packet_complete     = false;
 
   // data holders
-  unsigned char *read_buffer = NULL;  // frame buffer stuffed
-  unsigned char *data        = NULL;  // frame buffer unstuffed
-  unsigned char cheksum[2];
+  uint8_t *read_buffer = NULL;  // frame buffer stuffed
+  uint8_t *data        = NULL;  // frame buffer unstuffed
+  uint8_t cheksum[2];
 
   // Read usb data
   try{
@@ -366,17 +368,16 @@ void CEpos2::receiveFrame(unsigned int* ans_frame)
       e_s->wait_all(data_arrived,100);
 
       read_desired = this->comm_dev->get_num_data();
-
+      
       if(read_buffer!=NULL)
         delete[] read_buffer;
 
-      read_buffer = new unsigned char[read_desired];
+      read_buffer = new uint8_t[read_desired];
 
       read_real    = this->comm_dev->read( read_buffer, read_desired );
 
       if(read_real != read_desired)
         throw CEpos2Exception(_HERE_,"readed data length is not the desired");
-
 
       // parsing data
       //printf("%d%",read_real);
@@ -410,7 +411,7 @@ void CEpos2::receiveFrame(unsigned int* ans_frame)
             Len = read_buffer[i];
             if(data!=NULL)
               delete[] data;
-            data = new unsigned char[Len*2];
+            data = new uint8_t[Len*2];
             read_point = -1;
             state = 4;
             break;
@@ -478,16 +479,17 @@ void CEpos2::receiveFrame(unsigned int* ans_frame)
   int tf_i = 0;
   for(int i = 0; i < Len; i++)
   {
+    ans_frame[i] = 0x0000;
     // LSB to 0x__··
     ans_frame[i] = data[tf_i];
+    //printf("[ %.4X ] ",ans_frame[i]);
     tf_i++;
     // MSB to 0x··__
     ans_frame[i] = (data[tf_i]<<8) | ans_frame[i];
     tf_i++;
-
-    //printf("%.2X ",ans_frame[i]);
+    //printf("%.4X ",ans_frame[i]);
   }
-  //printf("\n");
+  //printf(" ");
 
   if(data!=NULL)
     delete[] data;
@@ -499,11 +501,11 @@ void CEpos2::receiveFrame(unsigned int* ans_frame)
 //     COMPUTE CHECKSUM
 // ----------------------------------------------------------------------------
 
-unsigned int CEpos2::computeChecksum(unsigned int *pDataArray, unsigned int numberOfWords)
+int16_t CEpos2::computeChecksum(int16_t *pDataArray, int16_t numberOfWords)
 {
-  unsigned short shifter, c;
-  unsigned short carry;
-  unsigned short CRC = 0;
+  uint16_t shifter, c;
+  uint16_t carry;
+  uint16_t CRC = 0;
 
   //Calculate pDataArray Word by Word
   while(numberOfWords--)
@@ -520,7 +522,7 @@ unsigned int CEpos2::computeChecksum(unsigned int *pDataArray, unsigned int numb
     } while(shifter);
   }
 
-  return (unsigned int)CRC;
+  return (int16_t)CRC;
 }
 
 
@@ -1683,10 +1685,11 @@ long CEpos2::readCurrentDemanded()
 	return(ans);
 }
 
-long CEpos2::readPosition()
+int32_t CEpos2::readPosition()
 {
   std::stringstream s;
-  long ans = this->readObject(0x6064, 0x00);
+  int32_t ans = this->readObject(0x6064, 0x00);
+  // printf("readposition %d\n",ans);
 
   s << "Pos: " <<std::hex<< ans << " / " <<std::dec<< ans;
   this->p(s);
@@ -1697,6 +1700,7 @@ long CEpos2::readPosition()
 long CEpos2::readStatusWord()
 {
   std::stringstream s;
+  p("readStatusWord: read Object");
   long ans = this->readObject(0x6041, 0x00);
 
 	s << "StatusWord: " <<std::hex<< ans << " / " <<std::dec<< ans;
