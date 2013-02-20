@@ -58,7 +58,7 @@ int main(void){
     // start the movement
     controller.startVelocity();
     CTime tbase,telapsed,t0,t1,tavg;
-    long pos=0,vel=0;
+    long pos=0;
     stringstream text;
     int k=0;
 
@@ -67,13 +67,12 @@ int main(void){
     do{
 
       t0.set();
-      //cout << "pos" << endl;
       pos = controller.readPosition();
-      cout << pos << endl;
-      //vel = controller.readVelocity();
       t1.set();
       tavg = t1-t0;
       avg = tavg.getTimeInSeconds();
+      telapsed = (t1+t0)/2 - tbase;
+      cout << ">>> " << telapsed.getTimeInSeconds() << " " << pos << endl;
 
       if(total_avg==0)
         total_avg = avg;
@@ -86,22 +85,14 @@ int main(void){
       telapsed.set();
       telapsed = telapsed - tbase;
 
-      //text.str("");
-      //cout << telapsed << " " << avg << " " << pos << " " << vel << endl;
-      //john.log(text.str().c_str()) ;
-
-      /*if(pos <0){
-        cout << text.str() << endl;
-        break;
-      }
-      */
       if( telapsed.getTimeInSeconds() > 5*k )
       {
         cout << telapsed << endl;
         k++;
       }
+      //usleep(100*1000);
 
-    }while( telapsed.getTimeInSeconds() < 1*60); //20*60 );
+    }while( telapsed.getTimeInSeconds() < 3*60);
     
     cout << "End" << endl;
 
