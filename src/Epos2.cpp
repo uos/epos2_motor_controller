@@ -2,6 +2,8 @@
 // Author Martí Morta Garriga  (mmorta@iri.upc.edu)
 // All rights reserved.
 //
+// Copyright (C) 2013 Jochen Sprickerhof <jochen@sprickerhof.de>
+//
 // This file is part of IRI EPOS2 Driver
 // IRI EPOS2 Driver is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +31,6 @@
 CEpos2::CEpos2(std::string id)
 {
   this->verbose = false;
-  this->comm_dev = NULL;
   this->pid = 0xa8b0;
   this->id = id;
 
@@ -92,8 +93,6 @@ void CEpos2::close()
   p("close()");
   this->disableVoltage();
 
-  delete this->comm_dev;
-
   p("offline");
 }
 
@@ -138,71 +137,14 @@ void CEpos2::setVerbose(bool verbose)
 
 void CEpos2::openDevice()
 {
-  this->ftdis = CFTDIServer::instance();
+    if(this->ftdi.open(0x403, this->pid) != 0)
+        throw CEpos2Exception(_HERE_,"No FTDI devices connected");
 
-  this->comm_dev = NULL;
-  std::string desc   = "";
-  std::string serial = "";
-  std::string name = "";
-
-  if(this->comm_dev!=NULL)
-    this->close();
-
-  int num=0;
-
-  try
-  {
-    ftdis->add_custom_PID(this->pid);
-
-    num = ftdis->get_num_devices();
-  }catch(CException &e)
-  {
-    throw CEpos2Exception(_HERE_,e.what());
-  }
-
-  if(num<=0)
-    throw CEpos2Exception(_HERE_,"No FTDI devices connected");
-
-  try
-  {
-
-    for(int i=0;i<num;i++)
-    {
-      name = "epos2_";
-      desc = this->ftdis->get_description(i);
-
-      if( desc.find("EPOS2") != std::string::npos )
-      {
-        serial = this->ftdis->get_serial_number(i);
-        name += serial;
-        this->comm_dev = this->ftdis->get_device(serial);;
-        std::stringstream s;
-        s << "EPOS2 : " << serial;
-        p(s);s.str("");
-      }
-    }
-
-    TFTDIconfig ftdi_config;
-
-    ftdi_config.baud_rate     = 1000000;
-    ftdi_config.word_length   = 8;
-    ftdi_config.stop_bits     = 0;
-    ftdi_config.parity        = 0;
-    ftdi_config.read_timeout  = 10000;
-    ftdi_config.write_timeout = 10000;
-    ftdi_config.latency_timer = 0;
-
-    this->comm_dev->config(&ftdi_config);
-
-    std::stringstream s;
-    s << (*this->comm_dev);
-    p(s);
-
-  }catch(CException &e)
-  {
-    throw CEpos2Exception(_HERE_,e.what());
-  }
-
+    this->ftdi.set_baud_rate(1000000);
+    this->ftdi.set_line_property(BITS_8, STOP_BIT_1, NONE);
+    this->ftdi.set_usb_read_timeout(10000);
+    this->ftdi.set_usb_write_timeout(10000);
+    this->ftdi.set_latency(0);
 }
 
 //     READ OBJECT
@@ -323,17 +265,8 @@ void CEpos2::sendFrame(int16_t *frame)
       i++;
   }
 
-  // write transmission frame
-  try{
-    //p("sendFrame: write comm");
-    this->comm_dev->write(trans_frame, tf_i);
-    //printf("bytes written: %d\n",bytes);
-
-  }catch(CFTDIException &e)
-  {
-    std::cout << e.what() << std::endl;
-    throw CEpos2Exception(_HERE_, "write error" );
-  }
+    if(this->ftdi.write(trans_frame, tf_i) < 0)
+        throw CEpos2Exception(_HERE_, "write error" );
 }
 
 //     RECEIVE FRAME
@@ -341,12 +274,6 @@ void CEpos2::sendFrame(int16_t *frame)
 
 void CEpos2::receiveFrame(uint16_t* ans_frame)
 {
-  // events
-  CEventServer *e_s = CEventServer::instance();
-  std::list<std::string> data_arrived;
-  std::string rx = this->comm_dev->get_rx_event_id();
-  data_arrived.push_back(rx);
-
   // length variables
   int read_desired         = 0;       // length of data that must read
   int read_real            = 0;       // length of data read actually
@@ -365,19 +292,15 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
 
     // get data packet
     do{
-      e_s->wait_all(data_arrived,100);
 
-      read_desired = this->comm_dev->get_num_data();
+      read_desired = this->ftdi.read_chunk_size();
       
       if(read_buffer!=NULL)
         delete[] read_buffer;
 
       read_buffer = new uint8_t[read_desired];
 
-      read_real    = this->comm_dev->read( read_buffer, read_desired );
-
-      if(read_real != read_desired)
-        throw CEpos2Exception(_HERE_,"readed data length is not the desired");
+      read_real    = this->ftdi.read(read_buffer, read_desired);
 
       // parsing data
       //printf("%d%",read_real);

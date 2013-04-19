@@ -2,6 +2,8 @@ Copyright (C) 2009-2010 Institut de Robòtica i Informàtica Industrial, CSIC-UP
 Author Martí Morta Garriga  (mmorta@iri.upc.edu)
 All rights reserved.
 
+Copyright (C) 2013 Jochen Sprickerhof <jochen@sprickerhof.de>
+
 This file is part of IRI EPOS2 Driver
 IRI EPOS2 Driver is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by

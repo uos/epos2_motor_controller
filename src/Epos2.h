@@ -2,6 +2,8 @@
 // Author Martí Morta Garriga  (mmorta@iri.upc.edu)
 // All rights reserved.
 //
+// Copyright (C) 2013 Jochen Sprickerhof <jochen@sprickerhof.de>
+//
 // This file is part of IRI EPOS2 Driver
 // IRI EPOS2 Driver is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -36,9 +38,7 @@
 #include "comm.h"
 #include "commexceptions.h"
 
-#include "ftdimodule.h"
-#include "ftdiserver.h"
-#include "ftdiexceptions.h"
+#include <ftdi.hpp>
 
 #include "epos2exceptions.h"
 
@@ -115,18 +115,7 @@ class CEpos2 {
      * result in an exception being thrown.
      *
      */
-    CFTDI *comm_dev;
-
-    /**
-     * \brief reference to the unique FTDI Server
-     *
-     * This reference to the unique ftdi server is initialized when an object of
-     * this class is first created. It is used to create and handle all the
-     * FTDI device drivers used to access the epos2. The object pointed
-     * by this reference is shared by all objects in any application.
-     *
-     */
-    CFTDIServer *ftdis;
+    Ftdi::Context ftdi;
 
 
    /// @name Communication low level
