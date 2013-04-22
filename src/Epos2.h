@@ -32,8 +32,6 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "eventserver.h"
-
 #include "comm.h"
 #include "commexceptions.h"
 
@@ -84,15 +82,6 @@ class CEpos2 {
 	private:
 
     std::string id;
-    std::string target_reached_event_id;
-    std::string position_marked_event_id;
-    std::string stop_marking_event_id;
-
-
-		/*! \brief Event Server
-		Events handler from iriutils
-		*/
-		CEventServer *events;
 
     /**
      * \brief a reference to the FTDI USB device
@@ -343,10 +332,6 @@ class CEpos2 {
 		 *  \return A boolean, target reached
 		 */
 		bool isTargetReached	();
-
-    std::string getTargetReachedEventId();
-    std::string getPositionMarkerEventId();
-    std::string getStopPositionMarkerEventId();
 
 ///@}
 
@@ -1814,10 +1799,6 @@ class CEpos2 {
     bool getVerbose();
 
     void setVerbose(bool verbose);
-
-
-    std::list<std::string> POSITION_MARKED;
-    std::list<std::string> TARGET_REACHED;
 
     /*!
     \brief gets the position marked by the sensor

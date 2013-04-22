@@ -38,17 +38,6 @@ CEpos2::CEpos2(std::string id)
   start_time.setFormat(ctf_ms);
   std::stringstream ts_id;
   ts_id << "_" << start_time;
-
-  this->events = CEventServer::instance();
-  this->target_reached_event_id = "target_reached_" + id + ts_id.str();
-  this->position_marked_event_id = "position_marked_" + id + ts_id.str();
-  this->stop_marking_event_id = "stop_marking_" + id + ts_id.str();
-  this->events->create_event(this->target_reached_event_id);
-  this->events->create_event(this->position_marked_event_id);
-  this->events->create_event(this->stop_marking_event_id);
-  POSITION_MARKED.push_back(this->position_marked_event_id);
-  TARGET_REACHED.push_back(this->target_reached_event_id);
-
 }
 
 //     DESTRUCTOR
@@ -2040,22 +2029,6 @@ void CEpos2::doHoming(bool blocking)
     while(!this->isTargetReached())
       usleep(1000000*0.05);
   }
-  self->events->set_event(self->getTargetReachedEventId());
-}
-
-std::string CEpos2::getTargetReachedEventId()
-{
-  return(this->target_reached_event_id);
-}
-
-std::string CEpos2::getPositionMarkerEventId()
-{
-  return(this->position_marked_event_id);
-}
-
-std::string CEpos2::getStopPositionMarkerEventId()
-{
-  return(this->stop_marking_event_id);
 }
 
 void CEpos2::stopHoming()

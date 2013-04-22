@@ -43,8 +43,6 @@ using namespace std;
 int main(void){
 
 	CEpos2 controller;
-  CEventServer *event_server;
-  event_server = CEventServer::instance();
 
 
 	cout << "Epos2 Position Marker:" << endl;
@@ -96,7 +94,6 @@ int main(void){
 		cout << e.what() << endl;
 	}
 
-  delete event_server;
 	return 1;
 
 }
