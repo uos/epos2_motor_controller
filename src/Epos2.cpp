@@ -39,13 +39,6 @@ CEpos2::CEpos2(std::string id)
   std::stringstream ts_id;
   ts_id << "_" << start_time;
 
-  this->threads = CThreadServer::instance();
-  this->target_reached_thread_id = "target_reached_" + id + ts_id.str();
-  this->position_marked_thread_id = "position_marked_" + id + ts_id.str();
-  this->threads->create_thread(this->target_reached_thread_id);
-  this->threads->attach_thread(this->target_reached_thread_id,
-                               this->threadTargetReached, this);
-
   this->events = CEventServer::instance();
   this->target_reached_event_id = "target_reached_" + id + ts_id.str();
   this->position_marked_event_id = "position_marked_" + id + ts_id.str();
@@ -895,25 +888,6 @@ void CEpos2::setTargetProfileVelocity(long velocity)
   this->writeObject(0x60FF, 0x00, velocity);
 }
 
-//     LISTEN PROFILE VELOCITY
-// ----------------------------------------------------------------------------
-
-void* CEpos2::listenProfileVelocity(void* params)
-{
-	CEpos2 *controller=(CEpos2*)params;
-
-	while(!controller->isTargetReached()){
-
-		// GET information
-		if(controller->verbose) controller->getMovementInfo();
-	}
-  if(controller->verbose) std::cout << "\n";
-
-	controller->p("Target Velocity Reached");;
-
-	pthread_exit(NULL);
-}
-
 //     START PROFILE VELOCITY
 // ----------------------------------------------------------------------------
 
@@ -922,15 +896,6 @@ void CEpos2::startProfileVelocity()
 	int intmode = 0x000F;
 
   this->writeObject(0x6040, 0x00,intmode);
-
-	const char *threadprofilevelocity = "tprofilevelocity";
-
-	threads=CThreadServer::instance();
-	threads->create_thread(threadprofilevelocity);
-	threads->attach_thread(threadprofilevelocity,listenProfileVelocity,this);
-	threads->start_thread(threadprofilevelocity);
-	threads->end_thread(threadprofilevelocity);
-	threads->delete_thread(threadprofilevelocity);
 }
 
 //     STOP PROFILE VELOCITY
@@ -968,32 +933,6 @@ void CEpos2::setTargetProfilePosition(long position)
   this->writeObject(0x607A, 0x00,position);
 }
 
-//     LISTEN PROFILE POSITION
-// ----------------------------------------------------------------------------
-
-void* CEpos2::listenProfilePosition(void* params)
-{
-	CEpos2 *controller=(CEpos2*)params;
-
-  if(controller->verbose)
-	{
-		while(!controller->isTargetReached()){
-
-			// GET information
-			controller->getMovementInfo();
-		}
-	}else
-	{
-		usleep(1000);
-	}
-
-  if(controller->verbose) std::cout << "\n";
-
-  controller->p(" Target Reached");
-
-	pthread_exit(NULL);
-}
-
 // 0 halt, 1 abs, 2 rel
 void CEpos2::startProfilePosition(epos_posmodes mode, bool blocking, bool wait, bool new_point)
  {
@@ -1007,16 +946,7 @@ void CEpos2::startProfilePosition(epos_posmodes mode, bool blocking, bool wait, 
 
   this->writeObject(0x6040, 0x00,intmode);
 
-  if( !blocking ){
-    const char *threadprofileposition= "tprofileposition";
-    threads = CThreadServer::instance();
-
-    threads->create_thread(threadprofileposition);
-    threads->attach_thread(threadprofileposition,listenProfilePosition,this);
-    threads->start_thread(threadprofileposition);
-    threads->end_thread(threadprofileposition);
-    threads->delete_thread(threadprofileposition);
-  }else{
+  if( blocking ){
 
     while( !this->isTargetReached() )
     {
@@ -2071,39 +2001,15 @@ void CEpos2::setPositionMarker(char mode, char polarity, char edge_type, char di
 
 }
 
-void CEpos2::startPositionMarker()
+void CEpos2::waitPositionMarker()
 {
-  this->threads = CThreadServer::instance();
-  this->threads->create_thread(this->position_marked_thread_id);
-  this->threads->attach_thread(this->position_marked_thread_id,
-                               this->threadPositionMarker, this);
-  this->threads->start_thread(this->position_marked_thread_id);
-}
+  long markpos = this->getPositionMarker();
 
-void CEpos2::stopPositionMarker()
-{
-  this->events->set_event(this->getStopPositionMarkerEventId());
-}
-
-void* CEpos2::threadPositionMarker(void *param)
-{
-  CEpos2 *self = (CEpos2*)param;
-  long markpos=0, markposold=0;
-
-  while( !self->events->event_is_set(self->stop_marking_event_id) )
+  while(markpos == this->getPositionMarker())
   {
-    markpos = self->getPositionMarker();
-    if(markpos != markposold)
-    {
-      self->events->set_event(self->getPositionMarkerEventId());
-      markposold = markpos;
-    }
     // minimum freq = 0.05s = 20Hz
     usleep(1000000*0.05);
   }
-  std::cout << "thread out\n";
-  pthread_exit(NULL);
-
 }
 
 
@@ -2126,36 +2032,15 @@ void CEpos2::setHoming(int home_method, int speed_pos, int speed_zero,
   this->writeObject(0x609A, 0x00, acc);
 }
 
-void CEpos2::doHoming()
+void CEpos2::doHoming(bool blocking)
 {
   this->writeObject(0x6040, 0x00, 0x001F);
-
-  this->threads->start_thread(this->target_reached_thread_id);
-}
-
-void CEpos2::stopHoming()
-{
-  this->events->set_event(this->getTargetReachedEventId());
-  this->writeObject(0x6040, 0x00, 0x010F);
-  this->threads->end_thread(this->target_reached_thread_id);
-  this->events->reset_event(this->getTargetReachedEventId());
-}
-
-void* CEpos2::threadTargetReached(void *param)
-{
-  CEpos2 *self = (CEpos2*)param;
-
-  bool tr=false;
-
-  while(!tr)
+  if(blocking)
   {
-    tr = self->isTargetReached();
-    // minimum freq = 0.05s = 20Hz
-    usleep(1000000*0.05);
+    while(!this->isTargetReached())
+      usleep(1000000*0.05);
   }
   self->events->set_event(self->getTargetReachedEventId());
-
-  pthread_exit(NULL);
 }
 
 std::string CEpos2::getTargetReachedEventId()
@@ -2171,6 +2056,11 @@ std::string CEpos2::getPositionMarkerEventId()
 std::string CEpos2::getStopPositionMarkerEventId()
 {
   return(this->stop_marking_event_id);
+}
+
+void CEpos2::stopHoming()
+{
+  this->writeObject(0x6040, 0x00, 0x010F);
 }
 
 // #############################   DIG IN   ###################################

@@ -70,8 +70,6 @@ int main(void){
     << "\n   Execution:       " << bitset<16>(controller.getDigInExecutionMask())
     << "\n";
 
-    controller.startPositionMarker();
-
    // if(controller.getDigInState(digin) == 4 && false)
    // {
      // controller.enableMotor(controller.VELOCITY);
@@ -81,14 +79,13 @@ int main(void){
       int num_positions = 1;
 
       while(num_positions < 11){
-        event_server->wait_first(controller.POSITION_MARKED);
+        controller.waitPositionMarker();
         cout << "  > New Position: " << endl
              << "      Hist(0): " << controller.getPositionMarker()  << endl
              << "      Hist(1): " << controller.getPositionMarker(1) << endl
              << "      Hist(2): " << controller.getPositionMarker(2) << endl;
         num_positions++;
       }
-      controller.stopPositionMarker();
      // controller.stopVelocity();
     // }
     controller.close();

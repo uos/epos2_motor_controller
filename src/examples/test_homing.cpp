@@ -72,9 +72,7 @@ int main(void){
     << "\n";
 
     controller.enableMotor(controller.HOMING);
-    controller.doHoming();
-
-    event_server->wait_first(controller.TARGET_REACHED);
+    controller.doHoming(true);
     cout << "   Home is done!\n\n";
 
     controller.close();

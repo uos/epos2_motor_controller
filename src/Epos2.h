@@ -33,7 +33,6 @@
 #include <time.h>
 
 #include "eventserver.h"
-#include "threadserver.h"
 
 #include "comm.h"
 #include "commexceptions.h"
@@ -95,13 +94,6 @@ class CEpos2 {
 		*/
 		CEventServer *events;
 
-    /*! \brief Thread Server
-    Threads handler from iriutils
-		*/
-		CThreadServer *threads;
-
-    std::string target_reached_thread_id;
-    std::string position_marked_thread_id;
     /**
      * \brief a reference to the FTDI USB device
      *
@@ -444,15 +436,6 @@ class CEpos2 {
 		 */
 		void setTargetProfilePosition		(long position);
 
-		 /**
-		 * \brief Profile position thread function
-		 *
-		 *  This function listen to epos2 if target is reached and then kills itself.
-		 *
-		 *  \param params in this case a pointer to CEpos2 object (this)
-		 */
-		static void* listenProfilePosition	(void* params);
-
 		/**
 		 * \brief function to move the motor to a position in profile position mode
 		 *
@@ -487,15 +470,6 @@ class CEpos2 {
 		 *  \param velocity desired velocity
  		*/
 		void setTargetProfileVelocity	(long velocity);
-
-		/**
-		 * \brief Profile velocity thread function
-		 *
-		 *  This function listen to epos2 if target is reached and then kills itself.
-		 *
-		 *  \param params in this case a pointer to CEpos2 object (this)
-		 */
-		static void* listenProfileVelocity(void* params);
 
 		/**
 		 * \brief [OPMODE=profile_velocity] function to move the motor in a velocity
@@ -1864,15 +1838,11 @@ class CEpos2 {
     void setPositionMarker(char polarity = 0, char edge_type = 0,
                            char mode = 0, char digitalIN = 2);
 
-    void startPositionMarker();
-
-    void stopPositionMarker();
-
-    /*! \brief Thread listens to marked positions
+    /*! \brief wait for marker position reached
     *
     *  \param param
     */
-    static void *threadPositionMarker(void *param);
+    void waitPositionMarker();
 
     /*!
     \brief Sets the configuration of a homing operation
@@ -1916,7 +1886,7 @@ class CEpos2 {
 
     Options had to be set with setHoming
     */
-    void doHoming();
+    void doHoming(bool blocking=false);
 
     /*! \brief Thread listens to target reached
     *
