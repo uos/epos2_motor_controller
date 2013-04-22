@@ -32,10 +32,6 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdexcept>
-
-#include "comm.h"
-#include "commexceptions.h"
-
 #include <ftdi.hpp>
 
 /*! \class CEpos2
@@ -51,10 +47,6 @@
 
  It implements all functions to use one unique controller and adds other useful
  features to simplify some tasks.
-
- It uses a library called usbcomm which does low level functions of usb
- communication and generates communication frames described in EPOS2
- Communication Guide.
 
  \warning Units are in default (position:[qc](=4*envoder counts/revolution),
  velocity: [rev/min], acceleration: [rev/min/s]) if you change dimension

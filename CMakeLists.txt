@@ -99,7 +99,6 @@ IF (UNIX)
  SET(CPACK_GENERATOR "DEB")
  SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "galenya - labrobotica@iri.upc.edu")
  SET(CPACK_SET_DESTDIR "ON")  # Necessary because of the absolute install paths
- SET(CPACK_DEBIAN_PACKAGE_DEPENDS "iri-iriutils-dev (>= 1.0~${DISTRIB}), iri-comm-dev (>= 1.0~${DISTRIB})")
 
  INCLUDE(CPack)
 ELSE(UNIX)
