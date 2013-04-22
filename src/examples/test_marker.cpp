@@ -21,7 +21,6 @@
 
 #include <iostream>
 #include <bitset>
-#include "ctime.h"
 #include "Epos2.h"
 
 using namespace std;

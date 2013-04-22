@@ -19,7 +19,6 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Epos2.h"
-#include "ctime.h"
 //#define DEBUG
 
 // ----------------------------------------------------------------------------
@@ -33,11 +32,6 @@ CEpos2::CEpos2(std::string id)
   this->verbose = false;
   this->pid = 0xa8b0;
   this->id = id;
-
-  CTime start_time;
-  start_time.setFormat(ctf_ms);
-  std::stringstream ts_id;
-  ts_id << "_" << start_time;
 }
 
 //     DESTRUCTOR
