@@ -292,7 +292,7 @@ class CEpos2 {
 		/**
 		 * \brief function to set the operation mode
 		 *
-		 *  \param opmode desired operation mode
+		 *  \param opmode desired operation mode (one of epos_opmodes)
 		 */
 		void setOperationMode		(long opmode);
 
@@ -556,7 +556,7 @@ class CEpos2 {
 		 *
 		 *  This function sets Current Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setCurrentPGain		(long gain);
 
@@ -565,7 +565,7 @@ class CEpos2 {
 		 *
 		 *  This function gets the actual I Current Gain
 		 *
-		 *  \return gain
+		 *  \return gain (must be between 0 and 32767)
 		 */
 		long getCurrentIGain		();
 
@@ -574,7 +574,7 @@ class CEpos2 {
 		 *
 		 *  This function sets Current Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setCurrentIGain		(long gain);
 
@@ -594,7 +594,7 @@ class CEpos2 {
 		 *
 		 *  This function sets P Velocity Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setVelocityPGain		(long gain);
 
@@ -612,7 +612,7 @@ class CEpos2 {
 		 *
 		 *  This function sets Velocity Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setVelocityIGain		(long gain);
 
@@ -652,7 +652,7 @@ class CEpos2 {
 		 *
 		 *  This function sets the actual P Position Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setPositionPGain		(long gain);
 
@@ -670,7 +670,7 @@ class CEpos2 {
 		 *
 		 *  This function sets the actual I Position Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setPositionIGain		(long gain);
 
@@ -688,7 +688,7 @@ class CEpos2 {
 		 *
 		 *  This function sets the actual D Position Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 32767)
 		 */
 		void setPositionDGain		(long gain);
 
@@ -706,7 +706,7 @@ class CEpos2 {
 		 *
 		 *  This function sets the actual Velocity Feed Forward  Position Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 65535)
 		 */
 		void setPositionVFFGain		(long gain);
 
@@ -724,7 +724,7 @@ class CEpos2 {
 		 *
 		 *  This function sets the actual Acceleration Feed Forward  Position Gain
 		 *
-		 *  \param gain
+		 *  \param gain (must be between 0 and 65535)
 		 */
 		void setPositionAFFGain		(long gain);
 

@@ -639,28 +639,7 @@ std::string CEpos2::getOpModeDescription(long opmode)
 
 void CEpos2::setOperationMode(long opmode)
 {
-	std::stringstream s;
-
-	if(
-	  opmode != VELOCITY &&
-	  opmode != POSITION &&
-	  opmode != PROFILE_VELOCITY &&
-	  opmode != PROFILE_POSITION &&
-	  opmode != INTERPOLATED_PROFILE_POSITION &&
-	  opmode != HOMING
-	  ){
-		if(opmode == NO_OPERATION){
-      std::cout << "    [EPOS2] Operation Mode not changed: " << opmode << std::endl;
-		}else{
-			std::cout << "    [EPOS2] ! ERROR: MODE NOT KNOWN:" << opmode
-          << " ACTUAL MODE: " << this->getOperationMode() << std::endl;
-		}
-	  }else{
-      this->writeObject(0x6060, 0x00,opmode);
-
-      s << "Operation Mode: " << opmode;
-      this->p(s);
-	  }
+    this->writeObject(0x6060, 0x00,opmode);
 }
 
 //     ENABLE CONTROLLER
@@ -945,18 +924,6 @@ long CEpos2::getCurrentPGain()
 
 void CEpos2::setCurrentPGain(long gain)
 {
-
-	if(gain > 32767){
-		gain=32767;
-
-		std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60F6, 0x01,gain);
 }
 
@@ -973,17 +940,6 @@ long CEpos2::getCurrentIGain()
 
 void CEpos2::setCurrentIGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60F6, 0x02,gain);
 }
 
@@ -1002,17 +958,6 @@ long CEpos2::getVelocityPGain()
 
 void CEpos2::setVelocityPGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60F9, 0x01,gain);
 }
 
@@ -1030,17 +975,6 @@ long CEpos2::getVelocityIGain()
 
 void CEpos2::setVelocityIGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60F9, 0x03,gain);
 }
 
@@ -1058,17 +992,6 @@ long CEpos2::getVelocitySetPointFactorPGain()
 
 void CEpos2::setVelocitySetPointFactorPGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60F9, 0x03,gain);
 }
 
@@ -1088,17 +1011,6 @@ long CEpos2::getPositionPGain()
 
 void CEpos2::setPositionPGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60FB, 0x01,gain);
 }
 
@@ -1116,17 +1028,6 @@ long CEpos2::getPositionIGain()
 
 void CEpos2::setPositionIGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60FB, 0x02,gain);
 }
 
@@ -1144,17 +1045,6 @@ long CEpos2::getPositionDGain()
 
 void CEpos2::setPositionDGain(long gain)
 {
-	if(gain > 32767){
-		gain=32767;
-
-    std::cout << "    [EPOS2] Gain > 32767! -> gain=32767" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60FB, 0x03,gain);
 }
 
@@ -1172,17 +1062,6 @@ long CEpos2::getPositionVFFGain()
 
 void CEpos2::setPositionVFFGain(long gain)
 {
-	if(gain > 65535){
-		gain=65535;
-
-    std::cout << "    [EPOS2] Gain > 65535! -> gain=65535" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60FB, 0x04,gain);
 }
 
@@ -1200,17 +1079,6 @@ long CEpos2::getPositionAFFGain()
 
 void CEpos2::setPositionAFFGain(long gain)
 {
-	if(gain > 65535){
-		gain=65535;
-
-    std::cout << "    [EPOS2] Gain > 65535! -> gain=65535" << std::endl;
-
-	}else if(gain < 0) {
-		gain = 0;
-
-    std::cout << "    [EPOS2] Gain < 0! -> gain=0" << std::endl;
-
-	}
   this->writeObject(0x60FB, 0x05,gain);
 }
 
