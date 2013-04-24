@@ -49,10 +49,7 @@ CEpos2::~CEpos2()
 
 void CEpos2::init()
 {
-  p("init()");
-
   this->openDevice();
-  p("readStatusWord()");  
   this->readStatusWord();
 }
 
@@ -61,10 +58,7 @@ void CEpos2::init()
 
 void CEpos2::close()
 {
-  p("close()");
   this->disableVoltage();
-
-  p("offline");
 }
 
 //     P (print for debug) (stringstream)
@@ -590,10 +584,6 @@ long CEpos2::getOperationMode()
   /// \todo veure si això fa falta
   //ans = this->getNegativeLong(ans);
 
-  std::stringstream s;
-  s << this->getOpModeDescription(ans);
-  p(s);
-
 	return(ans);
 }
 
@@ -626,9 +616,6 @@ std::string CEpos2::getOpModeDescription(long opmode)
 			name="Homing";
 			break;
 	}
-
-  s << "Operation Mode: " << name;
-  this->p(s);
 
 	return(name);
 
@@ -712,7 +699,6 @@ void CEpos2::enableController()
 void CEpos2::enableMotor(long opmode)
 {
 	int estat;
-  std::stringstream s;
 
   estat = this->getState();
 
@@ -720,7 +706,6 @@ void CEpos2::enableMotor(long opmode)
 	{
     this->enableOperation();
 	}
-  this->p("Operation Enable");
 
 	if( opmode != NO_OPERATION )
 	{
@@ -728,7 +713,6 @@ void CEpos2::enableMotor(long opmode)
 		{
       this->setOperationMode(opmode);
 		}
-    this->p("Motor Ready");
 	}
 }
 
@@ -760,13 +744,7 @@ bool CEpos2::isTargetReached()
 
 long CEpos2::getTargetVelocity()
 {
-  long ans = this->readObject(0x206B, 0x00);
-  std::stringstream s;
-
-	s << "Velocity: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-
-	return(ans);
+  return this->readObject(0x206B, 0x00);
 }
 
 //     SET TARGET VELOCITY
@@ -783,7 +761,6 @@ void CEpos2::setTargetVelocity(long velocity)
 void CEpos2::startVelocity()
 {
   this->writeObject(0x6040, 0x00, 0x010f);
-  this->p("Mode Velocity Started");
 }
 
 //     STOP VELOCITY
@@ -793,7 +770,6 @@ void CEpos2::stopVelocity()
 {
   // just velocity command = 0
   this->writeObject(0x206B, 0x00,0x0000);
-  this->p("Mode Velocity Stopped");
 }
 
 //----------------------------------------------------------------------------
@@ -804,13 +780,8 @@ void CEpos2::stopVelocity()
 
 long CEpos2::getTargetProfileVelocity()
 {
-  std::stringstream s;
 
-  long ans = this->readObject(0x60FF, 0x00);
-  s << "Profile Velocity: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-
-	return(ans);
+  return this->readObject(0x60FF, 0x00);
 }
 
 //     SET TARGET PROFILE VELOCITY
@@ -848,14 +819,7 @@ void CEpos2::stopProfileVelocity()
 
 long CEpos2::getTargetProfilePosition()
 {
-  std::stringstream s;
-
-  long ans = this->readObject(0x607A, 0x00);
-
-	s << "Profile Target Position: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-
-	return(ans);
+  return this->readObject(0x607A, 0x00);
 }
 
 //     SET TARGET PROFILE POSITION
@@ -886,8 +850,6 @@ void CEpos2::startProfilePosition(epos_posmodes mode, bool blocking, bool wait, 
       if(this->verbose) this->getMovementInfo();
       else usleep(1000);
     }
-    if(this->verbose) std::cout << "\n";
-    this->p("Target Reached");
   }
 
 }
@@ -912,14 +874,7 @@ void CEpos2::stopCurrent(){}
 
 long CEpos2::getCurrentPGain()
 {
-  std::stringstream s;
-
-  long ans = this->readObject(0x60F6, 0x01);
-
-	s << "Current P Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60F6, 0x01);
 }
 
 void CEpos2::setCurrentPGain(long gain)
@@ -929,13 +884,7 @@ void CEpos2::setCurrentPGain(long gain)
 
 long CEpos2::getCurrentIGain()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x60F6, 0x02);
-
-	s << "Current I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60F6, 0x02);
 }
 
 void CEpos2::setCurrentIGain(long gain)
@@ -947,13 +896,7 @@ void CEpos2::setCurrentIGain(long gain)
 
 long CEpos2::getVelocityPGain()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x60F9, 0x01);
-
-	s << "Velocity P Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60F9, 0x01);
 }
 
 void CEpos2::setVelocityPGain(long gain)
@@ -963,14 +906,7 @@ void CEpos2::setVelocityPGain(long gain)
 
 long CEpos2::getVelocityIGain()
 {
-  std::stringstream s;
-
-  long ans = this->readObject(0x60F9, 0x02);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60F9, 0x02);
 }
 
 void CEpos2::setVelocityIGain(long gain)
@@ -980,14 +916,7 @@ void CEpos2::setVelocityIGain(long gain)
 
 long CEpos2::getVelocitySetPointFactorPGain()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x60F9, 0x03);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60F9, 0x03);
 }
 
 void CEpos2::setVelocitySetPointFactorPGain(long gain)
@@ -999,14 +928,7 @@ void CEpos2::setVelocitySetPointFactorPGain(long gain)
 
 long CEpos2::getPositionPGain()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x60FB, 0x01);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60FB, 0x01);
 }
 
 void CEpos2::setPositionPGain(long gain)
@@ -1016,14 +938,7 @@ void CEpos2::setPositionPGain(long gain)
 
 long CEpos2::getPositionIGain()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x60FB, 0x02);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60FB, 0x02);
 }
 
 void CEpos2::setPositionIGain(long gain)
@@ -1034,13 +949,7 @@ void CEpos2::setPositionIGain(long gain)
 long CEpos2::getPositionDGain()
 {
 
-  std::stringstream s;
-  long ans = this->readObject(0x60FB, 0x03);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60FB, 0x03);
 }
 
 void CEpos2::setPositionDGain(long gain)
@@ -1050,14 +959,7 @@ void CEpos2::setPositionDGain(long gain)
 
 long CEpos2::getPositionVFFGain()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x60FB, 0x04);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60FB, 0x04);
 }
 
 void CEpos2::setPositionVFFGain(long gain)
@@ -1067,14 +969,7 @@ void CEpos2::setPositionVFFGain(long gain)
 
 long CEpos2::getPositionAFFGain()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x60FB, 0x05);
-
-	s << "Velocity I Gain: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x60FB, 0x05);
 }
 
 void CEpos2::setPositionAFFGain(long gain)
@@ -1136,13 +1031,7 @@ void CEpos2::printControlParameters(long cp,long ci,long vp,long vi,long vspf,
 
 long CEpos2::getProfileVelocity(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x6081, 0x00);
-
-	s << "Profile Velocity: "
-      << std::hex << ans << " / " << std::dec << ans << " [rpm]";
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6081, 0x00);
 }
 
 void CEpos2::setProfileVelocity(long velocity)
@@ -1152,13 +1041,7 @@ void CEpos2::setProfileVelocity(long velocity)
 
 long CEpos2::getProfileMaxVelocity(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x607F, 0x00);
-
-	s << "Profile Max Velocity: "
-      <<std::hex<< ans << " / " <<std::dec<< ans << " [rpm]";
-  this->p(s);
-	return(ans);
+  return this->readObject(0x607F, 0x00);
 }
 
 void CEpos2::setProfileMaxVelocity(long velocity)
@@ -1168,13 +1051,7 @@ void CEpos2::setProfileMaxVelocity(long velocity)
 
 long CEpos2::getProfileAcceleration(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x6083, 0x00);
-
-	s << "Profile Acceleration: "
-      <<std::hex<< ans << " / " <<std::dec<< ans << " [rpm/s]";
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6083, 0x00);
 }
 
 void CEpos2::setProfileAcceleration(long acceleration)
@@ -1184,13 +1061,7 @@ void CEpos2::setProfileAcceleration(long acceleration)
 
 long CEpos2::getProfileDeceleration(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x6084, 0x00);
-
-	s << "Profile deceleration: "
-      <<std::hex<< ans << " / " <<std::dec<< ans << " [rpm/s]";
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6084, 0x00);
 }
 
 void CEpos2::setProfileDeceleration(long deceleration)
@@ -1200,13 +1071,7 @@ void CEpos2::setProfileDeceleration(long deceleration)
 
 long CEpos2::getProfileQuickStopDecel(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x6085, 0x00);
-
-	s << "Profile Quick Stop deceleration: "
-      <<std::hex<< ans << " / " <<std::dec<< ans << " [rpm/s]";
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6085, 0x00);
 }
 
 void CEpos2::setProfileQuickStopDecel(long deceleration)
@@ -1216,17 +1081,7 @@ void CEpos2::setProfileQuickStopDecel(long deceleration)
 
 long CEpos2::getProfileType(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x6086, 0x00);
-
-	s << "Profile Type: "
-      <<std::hex<< ans << " / " <<std::dec<< ans;
-  if( ans == 0 )
-    s << " trapezoidal";
-  else
-    s << " sinusoidal";
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6086, 0x00);
 }
 
 void CEpos2::setProfileType(long type)
@@ -1236,12 +1091,7 @@ void CEpos2::setProfileType(long type)
 
 long CEpos2::getMaxAcceleration(void)
 {
-  std::stringstream s;
-  long ans = this->readObject(0x60C5, 0x00);
-
-	s << "Profile Max Acceleration: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x60C5, 0x00);
 }
 
 void CEpos2::setMaxAcceleration(long max_acceleration)
@@ -1282,150 +1132,69 @@ void CEpos2::setProfileData(long vel,long maxvel,long acc,long dec,
 
 long CEpos2::readVelocity()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x2028, 0x00);
-
-	s << "Velocity: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2028, 0x00);
 }
 
 long CEpos2::readVelocitySensorActual()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x6069, 0x00);
-
-	s << "Velocity Sensor Actual: " <<std::hex<< ans << " / "
-      <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6069, 0x00);
 }
 
 long CEpos2::readVelocityDemand()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x606B, 0x00);
-
-	s << "Velocity Demand: " <<std::hex<< ans << " / "
-      <<std::dec<< ans << std::endl;
-  this-> p(s);
-	return(ans);
+  return this->readObject(0x606B, 0x00);
 }
 
 long CEpos2::readVelocityActual	()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x606C, 0x00);
-
-	s << "Velocity Actual: " <<std::hex<< ans << " / "
-      <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x606C, 0x00);
 }
 
 long CEpos2::readCurrent()
 {
-  std::stringstream s;
   long ans = this->readObject(0x6078, 0x00);
-
-  ans=this->getNegativeLong(ans);
-
-	s << "Current: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->getNegativeLong(ans);
 }
 
 long CEpos2::readCurrentAveraged()
 {
-  std::stringstream s;
   long ans = this->readObject(0x2027, 0x00);
-
-  ans=this->getNegativeLong(ans);
-
-	s << "Current Averaged: " <<std::hex<< ans
-      << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->getNegativeLong(ans);
 }
 
 long CEpos2::readCurrentDemanded()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x2031, 0x00);
-
-	s << "Current Demanded: " <<std::hex<< ans
-      << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2031, 0x00);
 }
 
 int32_t CEpos2::readPosition()
 {
-  std::stringstream s;
-  int32_t ans = this->readObject(0x6064, 0x00);
-  // printf("readposition %d\n",ans);
-
-  s << "Pos: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-
-	return(ans);
+  return this->readObject(0x6064, 0x00);
 }
 
 long CEpos2::readStatusWord()
 {
-  std::stringstream s;
-  p("readStatusWord: read Object");
-  long ans = this->readObject(0x6041, 0x00);
-
-	s << "StatusWord: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x6041, 0x00);
 }
 
 long CEpos2::readEncoderCounter()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x2020, 0x00);
-
-	s << "Encoder Counter: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2020, 0x00);
 }
 
 long CEpos2::readEncoderCounterAtIndexPulse()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x2021, 0x00);
-
-	s << "Encoder Counter at Index Pulse: "
-      <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2021, 0x00);
 }
 
 long CEpos2::readHallsensorPattern()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x2022, 0x00);
-
-	s << "Hallsensor Pattern: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2022, 0x00);
 }
 
 long CEpos2::readFollowingError()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x20F4, 0x00);
-
-	s << "Following Error: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x20F4, 0x00);
 }
 
 void CEpos2::getMovementInfo()
@@ -1536,24 +1305,12 @@ std::string CEpos2::searchErrorDescription(long error_code)
 
 long CEpos2::readVersionSoftware()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x2003, 0x01);
-
-	s << "Version Software: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2003, 0x01);
 }
 
 long CEpos2::readVersionHardware()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x2003, 0x02);
-
-	s << "Version Hardware: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2003, 0x02);
 }
 
 
@@ -1611,14 +1368,7 @@ void CEpos2::setThermalTimeCtWinding(long time_ds){}
 
 long CEpos2::getMaxFollowingError()
 {
-
-  std::stringstream s;
-  long ans = this->readObject(0x6065, 0x00);
-
-	s << "Max Following Error: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+  return this->readObject(0x6065, 0x00);
 }
 
 void CEpos2::setMaxFollowingError(long error)
@@ -1626,15 +1376,9 @@ void CEpos2::setMaxFollowingError(long error)
   this->writeObject(0x6065, 0x00,error);
 }
 
-long CEpos2::getMinPositionLimit	(){
-
-  std::stringstream s;
-  long ans = this->readObject(0x607D, 0x01);
-
-	s << "Min Position Limit: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+long CEpos2::getMinPositionLimit	()
+{
+  return this->readObject(0x607D, 0x01);
 }
 
 void CEpos2::setMinPositionLimit(long limit)
@@ -1643,15 +1387,9 @@ void CEpos2::setMinPositionLimit(long limit)
 }
 
 
-long CEpos2::getMaxPositionLimit	(){
-
-  std::stringstream s;
-  long ans = this->readObject(0x607D, 0x02);
-
-	s << "Max Position Limit: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
-
+long CEpos2::getMaxPositionLimit	()
+{
+  return this->readObject(0x607D, 0x02);
 }
 
 void CEpos2::setMaxPositionLimit(long limit)
@@ -1723,12 +1461,7 @@ void CEpos2::restoreDefaultParameters()
 
 long CEpos2::getRS232Baudrate()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x2002, 0x00);
-
-	s << "RS232 Baudrate: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2002, 0x00);
 }
 
 void CEpos2::setRS232Baudrate(long baudrate)
@@ -1738,12 +1471,7 @@ void CEpos2::setRS232Baudrate(long baudrate)
 
 long CEpos2::getRS232FrameTimeout()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x2005, 0x00);
-
-	s << "RS232 Frame Timeout: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2005, 0x00);
 }
 
 void CEpos2::setRS232FrameTimeout(long timeout)
@@ -1753,12 +1481,7 @@ void CEpos2::setRS232FrameTimeout(long timeout)
 
 long CEpos2::getUSBFrameTimeout()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x2006, 0x00);
-
-	s << "USB Frame Timeout: " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-	return(ans);
+  return this->readObject(0x2006, 0x00);
 }
 
 void CEpos2::setUSBFrameTimeout(long timeout)
@@ -1799,12 +1522,7 @@ long CEpos2::getPositionMarker(int buffer)
       obj = 6;
       break;
   }
-  std::stringstream s;
-  long ans = this->readObject(0x2074, obj);
-
-  s << " Marker Position " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2074, obj);
 }
 
 void CEpos2::setPositionMarker(char mode, char polarity, char edge_type, char digitalIN)
@@ -1877,52 +1595,27 @@ void CEpos2::stopHoming()
 
 int CEpos2::getDigInState(int digitalIN)
 {
-  std::stringstream s;
-  int ans = this->readObject(0x2070, digitalIN);
-
-  s << "Digital In " << digitalIN << ": " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2070, digitalIN);
 }
 
 int CEpos2::getDigInStateMask()
 {
-  std::stringstream s;
-  int ans = this->readObject(0x2071, 0x01);
-
-  s << "State Mas k: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2071, 0x01);
 }
 
 int CEpos2::getDigInFuncMask()
 {
-  std::stringstream s;
-  int ans = this->readObject(0x2071, 0x02);
-
-  s << "Functionalities Mask: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2071, 0x02);
 }
 
 int CEpos2::getDigInPolarity()
 {
-  std::stringstream s;
-  int ans = this->readObject(0x2071, 0x03);
-
-  s << "Polarity Mask: " <<std::hex<< ans << " / " <<std::dec<< ans ;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2071, 0x03);
 }
 
 int CEpos2::getDigInExecutionMask()
 {
-  std::stringstream s;
-  int ans = this->readObject(0x2071, 0x04);
-
-  s << "Execution Mask: " <<std::hex<< ans << " / " <<std::dec<< ans;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2071, 0x04);
 }
 
 
@@ -1935,12 +1628,7 @@ void CEpos2::setHomePosition(long home_position_qc)
 }
 long CEpos2::getHomePosition()
 {
-  std::stringstream s;
-  long ans = this->readObject(0x2081, 0x00);
-
-  s << " Home Position " <<std::hex<< ans << " / " <<std::dec<< ans << std::endl;
-  this->p(s);
-  return(ans);
+  return this->readObject(0x2081, 0x00);
 }
 
 void CEpos2::setHome()
@@ -2047,18 +1735,3 @@ const std::string CEpos2::error_descriptions[]={
   "Interpolated Position Mode Error",
   "Autotuning Identification Error"
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

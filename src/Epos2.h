@@ -900,6 +900,7 @@ class CEpos2 {
 		 * \brief function to GET the type in profile
 		 *
 		 *  This function gets the type in profile
+		 *  trapezoidal if 0, sinusoidal otherwise
 		 *
 		 *  \return Max Position Limit
 		 */
@@ -1932,4 +1933,3 @@ class EPOS2UnknownStateException : public std::runtime_error
 };
 
 #endif
-
