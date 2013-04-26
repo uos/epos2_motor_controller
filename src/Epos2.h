@@ -31,14 +31,12 @@
 #include <string>
 #include <unistd.h>
 #include <time.h>
+#include <stdexcept>
 
 #include "comm.h"
 #include "commexceptions.h"
 
 #include <ftdi.hpp>
-
-#include "epos2exceptions.h"
-
 
 /*! \class CEpos2
  \brief Implementation of a driver for EPOS2 Motor Controller
@@ -1918,6 +1916,27 @@ class CEpos2 {
     int getDigInExecutionMask();
 
 ///@}
+};
+
+class EPOS2OpenException : public std::runtime_error
+{
+  public:
+    EPOS2OpenException(const std::string& error_description)
+      : std::runtime_error (error_description) {}
+};
+
+class EPOS2IOException : public std::runtime_error
+{
+  public:
+    EPOS2IOException(const std::string& error_description)
+      : std::runtime_error (error_description) {}
+};
+
+class EPOS2UnknownStateException : public std::runtime_error
+{
+  public:
+    EPOS2UnknownStateException(const std::string& error_description)
+      : std::runtime_error (error_description) {}
 };
 
 #endif

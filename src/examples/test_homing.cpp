@@ -75,7 +75,7 @@ int main(void){
 
     controller.close();
 
-	}catch(CException &e){
+	}catch(std::exception &e){
     controller.init();
     controller.close();
 		cout << e.what() << endl;

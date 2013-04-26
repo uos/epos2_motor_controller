@@ -59,12 +59,7 @@ void CEpos2::init()
 
   this->openDevice();
   p("readStatusWord()");  
-  try{
-    this->readStatusWord();
-  }catch(CException &e)
-  {
-    throw CEpos2Exception(_HERE_,"Impossible to read Status Word.\n     Is the controller powered ?");
-  }
+  this->readStatusWord();
 }
 
 //     CLOSE
@@ -120,7 +115,7 @@ void CEpos2::setVerbose(bool verbose)
 void CEpos2::openDevice()
 {
     if(this->ftdi.open(0x403, this->pid) != 0)
-        throw CEpos2Exception(_HERE_,"No FTDI devices connected");
+        throw EPOS2OpenException("No FTDI devices connected");
 
     this->ftdi.set_baud_rate(1000000);
     this->ftdi.set_line_property(BITS_8, STOP_BIT_1, NONE);
@@ -144,31 +139,23 @@ int32_t CEpos2::readObject(int16_t index, int8_t subindex)
   req_frame[2] = ((0x0000 | node_id) << 8) | subindex; // node_id subindex
   req_frame[3] = 0x0000;     // CRC
 
-  try{
-    
-    //p("readObject: sendFrame");
-    this->sendFrame(req_frame);
+  //p("readObject: sendFrame");
+  this->sendFrame(req_frame);
 
-    //printf("RF: %.2X %.2X %.2X %.2X\n",req_frame[0],req_frame[1],req_frame[2],req_frame[3]);
+  //printf("RF: %.2X %.2X %.2X %.2X\n",req_frame[0],req_frame[1],req_frame[2],req_frame[3]);
 
-    //p("readObject: receiveFrame");
-    this->receiveFrame(ans_frame);
+  //p("readObject: receiveFrame");
+  this->receiveFrame(ans_frame);
 
-    //printf("AF: %.2X %.2X %.2X %.2X\n",ans_frame[0],ans_frame[1],ans_frame[2],ans_frame[3]);
+  //printf("AF: %.2X %.2X %.2X %.2X\n",ans_frame[0],ans_frame[1],ans_frame[2],ans_frame[3]);
 
-    // if 0x8090, its 16 bit answer else is 32 bit
-    if(ans_frame[3]==0x8090)
-      result = ans_frame[2];
-    else
-      result = (ans_frame[3] << 16) | ans_frame[2];
+  // if 0x8090, its 16 bit answer else is 32 bit
+  if(ans_frame[3]==0x8090)
+    result = ans_frame[2];
+  else
+    result = (ans_frame[3] << 16) | ans_frame[2];
 
-    //printf("result: %d %d -> %d\n",ans_frame[3],ans_frame[2],result);
-
-  }catch(CException &e)
-  {
-    std::cout << "ERROR: " << e.what() <<std::endl;
-    throw CEpos2Exception(_HERE_, "read object error" );
-  }
+  //printf("result: %d %d -> %d\n",ans_frame[3],ans_frame[2],result);
 
   return result;
 }
@@ -190,20 +177,14 @@ int32_t CEpos2::writeObject(int16_t index, int8_t subindex, int32_t data)
   req_frame[4] = data >> 16;
   req_frame[5] = 0x0000;     // checksum
 
-  try{
-    this->sendFrame(req_frame);
-    this->receiveFrame(ans_frame);
+  this->sendFrame(req_frame);
+  this->receiveFrame(ans_frame);
 
-    // if 0x8090, its 16 bit answer else is 32 bit
-    if(ans_frame[3]==0x8090)
-      result = ans_frame[2];
-    else
-      result = (ans_frame[3] << 16) | ans_frame[2];
-
-  }catch(CException &e)
-  {
-    throw CEpos2Exception(_HERE_, "write object error" );
-  }
+  // if 0x8090, its 16 bit answer else is 32 bit
+  if(ans_frame[3]==0x8090)
+    result = ans_frame[2];
+  else
+    result = (ans_frame[3] << 16) | ans_frame[2];
 
   return result;
 }
@@ -248,7 +229,7 @@ void CEpos2::sendFrame(int16_t *frame)
   }
 
     if(this->ftdi.write(trans_frame, tf_i) < 0)
-        throw CEpos2Exception(_HERE_, "write error" );
+        throw EPOS2IOException("Impossible to write Status Word.\nIs the controller powered ?");
 }
 
 //     RECEIVE FRAME
@@ -269,115 +250,106 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
   uint8_t *data        = NULL;  // frame buffer unstuffed
   uint8_t cheksum[2];
 
-  // Read usb data
-  try{
+  // get data packet
+  do{
 
-    // get data packet
-    do{
+    read_desired = this->ftdi.read_chunk_size();
 
-      read_desired = this->ftdi.read_chunk_size();
-      
-      if(read_buffer!=NULL)
-        delete[] read_buffer;
+    if(read_buffer!=NULL)
+      delete[] read_buffer;
 
-      read_buffer = new uint8_t[read_desired];
+    read_buffer = new uint8_t[read_desired];
 
-      read_real    = this->ftdi.read(read_buffer, read_desired);
+    read_real    = this->ftdi.read(read_buffer, read_desired);
 
-      // parsing data
-      //printf("%d%",read_real);
+    // parsing data
+    //printf("%d%",read_real);
 
-      for(int i=0;i<read_real;i++)
+    for(int i=0;i<read_real;i++)
+    {
+      //printf("%.2X.",read_buffer[i]);
+
+      switch (state)
       {
-        //printf("%.2X.",read_buffer[i]);
-
-        switch (state)
-        {
-          case 0:
-          // no sync
-            if(read_buffer[i] == 0x90)
-              state = 1;
+        case 0:
+        // no sync
+          if(read_buffer[i] == 0x90)
+            state = 1;
+          else
+            state = 0;
+          break;
+        case 1:
+          // sync stx
+          if(read_buffer[i] == 0x02)
+            state = 2;
+          else
+            state = 0;
+          break;
+        case 2:
+          // opcode
+          state = 3;
+         break;
+        case 3:
+          // len (16 bits)
+          Len = read_buffer[i];
+          if(data!=NULL)
+            delete[] data;
+          data = new uint8_t[Len*2];
+          read_point = -1;
+          state = 4;
+          break;
+        case 4:
+          read_point++;
+          data[read_point] = read_buffer[i];
+          if(data[read_point]==0x90)
+          {
+            state = 5;
+          }else{
+            if(read_point+1 == Len*2)
+              state = 6;
             else
-              state = 0;
-            break;
-          case 1:
-            // sync stx
-            if(read_buffer[i] == 0x02)
-              state = 2;
-            else
-              state = 0;
-            break;
-          case 2:
-            // opcode
-            state = 3;
-           break;
-          case 3:
-            // len (16 bits)
-            Len = read_buffer[i];
-            if(data!=NULL)
-              delete[] data;
-            data = new uint8_t[Len*2];
-            read_point = -1;
+              state = 4;
+          }
+          break;
+        case 5:
+          // destuffing
             state = 4;
             break;
-          case 4:
-            read_point++;
-            data[read_point] = read_buffer[i];
-            if(data[read_point]==0x90)
-            {
-              state = 5;
-            }else{
-              if(read_point+1 == Len*2)
-                state = 6;
-              else
-                state = 4;
-            }
-            break;
-          case 5:
-            // destuffing
-              state = 4;
-              break;
-          case 6:
-            // checksum 1
-            cheksum[1] = read_buffer[i];
-            if(cheksum[1]==0x90){
-              state = 8;
-            }else{
-              state = 7;
-            }
-            break;
-          case 7:
-            // checksum 0
-            cheksum[0] = read_buffer[i];
-            if(cheksum[0]==0x90){
-              state = 9;
-            }else{
-              state = 0;
-              packet_complete = true;
-            }
-            break;
-          case 8:
-            // destuff checksum 1
+        case 6:
+          // checksum 1
+          cheksum[1] = read_buffer[i];
+          if(cheksum[1]==0x90){
+            state = 8;
+          }else{
             state = 7;
-            break;
-          case 9:
-            // destuff checksum 0
+          }
+          break;
+        case 7:
+          // checksum 0
+          cheksum[0] = read_buffer[i];
+          if(cheksum[0]==0x90){
+            state = 9;
+          }else{
             state = 0;
             packet_complete = true;
-            break;
-        }
+          }
+          break;
+        case 8:
+          // destuff checksum 1
+          state = 7;
+          break;
+        case 9:
+          // destuff checksum 0
+          state = 0;
+          packet_complete = true;
+          break;
       }
-      //printf(" - ");
+    }
+    //printf(" - ");
 
-    }while(!packet_complete);
+  }while(!packet_complete);
 
-    //printf("\n");
-
-  }catch(CException &e)
-  {
-    std::cout << e.what() << std::endl;
-    throw CEpos2Exception(_HERE_, "reading error" );
-  }
+  //printf("\n");
 
   // parse data
   //printf("AF = ");
@@ -551,8 +523,7 @@ long CEpos2::getState()
 	}
 	// Error
   std::cout << this->searchErrorDescription( this->readError() ) << std::endl;
-	throw CEpos2Exception(_HERE_, "State Error");
-
+	throw EPOS2UnknownStateException(this->searchErrorDescription(this->readError()));
 }
 
 //     SHUTDOWN (transition)

@@ -132,7 +132,7 @@ int main(void){
 
     cout << "\n  EPOS2 : GREEN LED blinking\n" << endl;
 
-	}catch(CException &e){
+	}catch(std::exception &e){
 		cout << e.what() << endl << endl;
 	}
 

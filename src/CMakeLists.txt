@@ -1,7 +1,7 @@
 # driver source files
-SET(sources Epos2.cpp epos2exceptions.cpp)
+SET(sources Epos2.cpp)
 # application header files
-SET(headers Epos2.h   epos2exceptions.h)
+SET(headers Epos2.h)
 
 # locate the necessary dependencies
 FIND_PACKAGE(iriutils)

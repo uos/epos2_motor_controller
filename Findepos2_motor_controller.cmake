@@ -1,5 +1,5 @@
 #edit the following line to add the librarie's header files
-FIND_PATH(epos2_motor_controller_INCLUDE_DIR Epos2.h epos2exceptions.h /usr/include/iridrivers /usr/local/include/iridrivers)
+FIND_PATH(epos2_motor_controller_INCLUDE_DIR Epos2.h /usr/include/iridrivers /usr/local/include/iridrivers)
 
 FIND_LIBRARY(epos2_motor_controller_LIBRARY
     NAMES epos2_motor_controller

@@ -645,7 +645,7 @@ int main(int argc, char **argv)
     // Stop motor controller
     epos2->close();
 
-  }catch(CEpos2Exception &exc)
+  }catch(std::exception &exc)
   {
     cout << "EPOS2 Exception: " << exc.what() << endl;
     return(-1);
