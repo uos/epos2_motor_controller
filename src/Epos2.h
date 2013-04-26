@@ -71,8 +71,6 @@ class CEpos2 {
 
 	private:
 
-    std::string id;
-
     /**
      * \brief a reference to the FTDI USB device
      *
@@ -172,8 +170,6 @@ class CEpos2 {
 
     bool verbose;
 
-    int pid;
-
     /*!
     \brief function to make a unsigned long signed
 
@@ -192,7 +188,7 @@ class CEpos2 {
 
 		/*! \brief Constructor
 		*/
-		CEpos2(std::string id="controller");
+		CEpos2();
 
 		/*! \brief Destructor
 		*/

@@ -27,11 +27,9 @@
 //     CONSTRUCTOR
 // ----------------------------------------------------------------------------
 
-CEpos2::CEpos2(std::string id)
+CEpos2::CEpos2()
 {
   this->verbose = false;
-  this->pid = 0xa8b0;
-  this->id = id;
 }
 
 //     DESTRUCTOR
@@ -102,7 +100,7 @@ void CEpos2::setVerbose(bool verbose)
 
 void CEpos2::openDevice()
 {
-    if(this->ftdi.open(0x403, this->pid) != 0)
+    if(this->ftdi.open(0x403, 0xa8b0) != 0)
         throw EPOS2OpenException("No FTDI devices connected");
 
     this->ftdi.set_baud_rate(1000000);
