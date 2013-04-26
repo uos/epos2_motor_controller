@@ -374,7 +374,7 @@ epos2->setProfileData(prof[0],prof[1],prof[2],prof[3],prof[4],prof[5],prof[6]);
 		case '2':
       cout << "  ConfigTest  Configure Control Parameters\n\n";
 			// Control
-			long conpar[9];
+			long conpar[10];
 
 epos2->getControlParameters(conpar[0],conpar[1],conpar[2],conpar[3],conpar[4],
 conpar[5],conpar[6],conpar[7],conpar[8],conpar[9]);
