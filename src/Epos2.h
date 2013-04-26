@@ -71,6 +71,8 @@ class CEpos2 {
 
 	private:
 
+    int8_t  node_id;
+
     /**
      * \brief a reference to the FTDI USB device
      *
@@ -188,7 +190,7 @@ class CEpos2 {
 
 		/*! \brief Constructor
 		*/
-		CEpos2();
+		CEpos2(int8_t nodeId = 0x00);
 
 		/*! \brief Destructor
 		*/

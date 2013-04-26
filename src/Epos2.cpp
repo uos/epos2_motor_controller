@@ -27,10 +27,8 @@
 //     CONSTRUCTOR
 // ----------------------------------------------------------------------------
 
-CEpos2::CEpos2()
-{
-  this->verbose = false;
-}
+CEpos2::CEpos2(int8_t nodeId) : node_id(nodeId), verbose(false)
+{ }
 
 //     DESTRUCTOR
 // ----------------------------------------------------------------------------
@@ -118,11 +116,10 @@ int32_t CEpos2::readObject(int16_t index, int8_t subindex)
   int32_t result = 0x00000000;
   int16_t req_frame[4];
   uint16_t ans_frame[4];
-  int8_t  node_id = 0x00; // TODO attribute of the class
 
   req_frame[0] = 0x0210;     // header (LEN,OPCODE)
   req_frame[1] = index;      // data
-  req_frame[2] = ((0x0000 | node_id) << 8) | subindex; // node_id subindex
+  req_frame[2] = ((0x0000 | this->node_id) << 8) | subindex; // node_id subindex
   req_frame[3] = 0x0000;     // CRC
 
   //p("readObject: sendFrame");
@@ -154,11 +151,10 @@ int32_t CEpos2::writeObject(int16_t index, int8_t subindex, int32_t data)
   int32_t result = 0;
   int16_t req_frame[6]={0,0,0,0,0,0};
   uint16_t ans_frame[40]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-  int8_t node_id = 0x00;
 
   req_frame[0] = 0x0411;     // header (LEN,OPCODE)
   req_frame[1] = index;      // data
-  req_frame[2] = ((0x0000 | node_id) << 8) | subindex;
+  req_frame[2] = ((0x0000 | this->node_id) << 8) | subindex;
   req_frame[3] = data & 0x0000FFFF;
   req_frame[4] = data >> 16;
   req_frame[5] = 0x0000;     // checksum
