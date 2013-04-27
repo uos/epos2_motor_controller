@@ -21,16 +21,7 @@
 #ifndef Epos2_H
 #define Epos2_H
 
-#include <cstdio>
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <iostream>
-#include <sstream>
-#include <cstdlib>
 #include <string>
-#include <unistd.h>
-#include <time.h>
 #include <stdexcept>
 #include <ftdi.hpp>
 
