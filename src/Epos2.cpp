@@ -237,12 +237,17 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
 
     read_desired = this->ftdi.read_chunk_size();
 
-    if(read_buffer!=NULL)
-      delete[] read_buffer;
-
     read_buffer = new uint8_t[read_desired];
 
     read_real    = this->ftdi.read(read_buffer, read_desired);
+
+    if(read_real < 0)
+    {
+      delete[] read_buffer;
+      if(data!=NULL)
+        delete[] data;
+      throw EPOS2IOException("Impossible to read Status Word.\nIs the controller powered ?");
+    }
 
     // parsing data
     //printf("%d%",read_real);
