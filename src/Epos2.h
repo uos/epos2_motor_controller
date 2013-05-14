@@ -77,7 +77,8 @@ class CEpos2 {
      * result in an exception being thrown.
      *
      */
-    Ftdi::Context ftdi;
+    static Ftdi::Context ftdi;
+    static bool ftdi_initialized;
 
 
    /// @name Communication low level

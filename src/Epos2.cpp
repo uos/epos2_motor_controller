@@ -99,16 +99,22 @@ void CEpos2::setVerbose(bool verbose)
 //     OPEN DEVICE
 // ----------------------------------------------------------------------------
 
+bool CEpos2::ftdi_initialized = false;
+Ftdi::Context CEpos2::ftdi;
+
 void CEpos2::openDevice()
 {
-    if(this->ftdi.open(0x403, 0xa8b0) != 0)
+    if(CEpos2::ftdi_initialized)
+      return;
+    if(CEpos2::ftdi.open(0x403, 0xa8b0) != 0)
         throw EPOS2OpenException("No FTDI devices connected");
 
-    this->ftdi.set_baud_rate(1000000);
-    this->ftdi.set_line_property(BITS_8, STOP_BIT_1, NONE);
-    this->ftdi.set_usb_read_timeout(10000);
-    this->ftdi.set_usb_write_timeout(10000);
-    this->ftdi.set_latency(0);
+    CEpos2::ftdi.set_baud_rate(1000000);
+    CEpos2::ftdi.set_line_property(BITS_8, STOP_BIT_1, NONE);
+    CEpos2::ftdi.set_usb_read_timeout(10000);
+    CEpos2::ftdi.set_usb_write_timeout(10000);
+    CEpos2::ftdi.set_latency(0);
+    CEpos2::ftdi_initialized = true;
 }
 
 //     READ OBJECT
@@ -213,7 +219,7 @@ void CEpos2::sendFrame(int16_t *frame)
       i++;
   }
 
-    if(this->ftdi.write(trans_frame, tf_i) < 0)
+    if(CEpos2::ftdi.write(trans_frame, tf_i) < 0)
         throw EPOS2IOException("Impossible to write Status Word.\nIs the controller powered ?");
 }
 
@@ -238,11 +244,11 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
   // get data packet
   do{
 
-    read_desired = this->ftdi.read_chunk_size();
+    read_desired = CEpos2::ftdi.read_chunk_size();
 
     read_buffer = new uint8_t[read_desired];
 
-    read_real    = this->ftdi.read(read_buffer, read_desired);
+    read_real    = CEpos2::ftdi.read(read_buffer, read_desired);
 
     if(read_real < 0)
     {
