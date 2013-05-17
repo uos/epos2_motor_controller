@@ -1,0 +1,4 @@
+usr/include/*
+usr/lib/lib*.so
+usr/lib/cmake/libepos2/LibEPOS2Config.cmake
+usr/lib/cmake/libepos2/UseLibEPOS2.cmake

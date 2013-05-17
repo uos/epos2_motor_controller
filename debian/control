@@ -1,0 +1,25 @@
+Source: libepos2
+Priority: extra
+Maintainer: Jochen Sprickerhof <launchpad@jochen.sprickerhof.de>
+Build-Depends: debhelper (>= 8.0.0), cmake, libftdipp1-dev
+Standards-Version: 3.9.4
+Section: libs
+#Homepage: <insert the upstream URL, if relevant>
+#Vcs-Git: git://git.debian.org/collab-maint/libepos2.git
+#Vcs-Browser: http://git.debian.org/?p=collab-maint/libepos2.git;a=summary
+
+Package: libepos2-dev
+Section: libdevel
+Architecture: any
+Depends: libepos2-0 (= ${binary:Version})
+Description: Driver for the Maxon EPOS2 motor controller - development
+ This is a driver for the Maxon EPOS2 controller, tested with the EPOS2 70/10.
+ .
+ This package contains the development header.
+
+Package: libepos2-0
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Driver for the Maxon EPOS2 motor controller
+ This is a driver for the Maxon EPOS2 controller, tested with the EPOS2 70/10.
