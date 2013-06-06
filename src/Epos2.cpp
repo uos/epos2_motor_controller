@@ -113,7 +113,7 @@ void CEpos2::openDevice()
     CEpos2::ftdi.set_line_property(BITS_8, STOP_BIT_1, NONE);
     CEpos2::ftdi.set_usb_read_timeout(10000);
     CEpos2::ftdi.set_usb_write_timeout(10000);
-    CEpos2::ftdi.set_latency(0);
+    CEpos2::ftdi.set_latency(1);
     CEpos2::ftdi_initialized = true;
 }
 
