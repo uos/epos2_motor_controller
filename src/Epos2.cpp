@@ -1325,10 +1325,15 @@ long CEpos2::readVersionHardware()
 
 	// SENSOR CONFIGURATION
 
-long CEpos2::getEncoderPulseNumber(){return 1;}
+long CEpos2::getEncoderPulseNumber()
+{
+  return this->readObject(0x2210, 0x01);
+}
 
 void CEpos2::setEncoderPulseNumber(long pulses)
-{}
+{
+  this->writeObject(0x2210, 0x01, pulses);
+}
 
 long CEpos2::getEncoderType()
 {return 1;}
