@@ -343,6 +343,8 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
     }
     //printf(" - ");
 
+    delete[] read_buffer;
+
   }while(!packet_complete);
 
   //printf("\n");
@@ -366,8 +368,6 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
 
   if(data!=NULL)
     delete[] data;
-  if(read_buffer!=NULL)
-    delete[] read_buffer;
 
 }
 
