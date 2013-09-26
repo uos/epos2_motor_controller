@@ -11,7 +11,7 @@ Section: libs
 Package: libepos2-dev
 Section: libdevel
 Architecture: any
-Depends: libepos2-0 (= ${binary:Version})
+Depends: libepos2-0 (= ${binary:Version}), libftdipp1-dev
 Description: Driver for the Maxon EPOS2 motor controller - development
  This is a driver for the Maxon EPOS2 controller, tested with the EPOS2 70/10.
  .

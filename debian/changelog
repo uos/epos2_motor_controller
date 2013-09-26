@@ -1,3 +1,21 @@
+libepos2 (0.3-1~ppa2~precise1) precise; urgency=low
+
+  * Add dependency to libftdipp1-dev in libepos2-dev.
+
+ -- Jochen Sprickerhof <launchpad@jochen.sprickerhof.de>  Thu, 13 Jun 2013 14:37:10 +0200
+
+libepos2 (0.3-1~ppa1~raring1) raring; urgency=low
+
+  * New release 0.3
+
+ -- Jochen Sprickerhof <launchpad@jochen.sprickerhof.de>  Thu, 06 Jun 2013 16:17:09 +0200
+
+libepos2 (0.2-1~ppa1~precise1) precise; urgency=low
+
+  * New upstream release (Fix latency).
+
+ -- Jochen Sprickerhof <launchpad@jochen.sprickerhof.de>  Thu, 06 Jun 2013 14:13:06 +0200
+
 libepos2 (0.1-1) unstable; urgency=low
 
   * Initial release.
