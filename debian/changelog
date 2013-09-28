@@ -1,3 +1,10 @@
+libepos2 (0.4-1~ppa1~raring1) raring; urgency=low
+
+  * Fix memory leak
+  * New Version 0.4
+
+ -- Jochen Sprickerhof <launchpad@jochen.sprickerhof.de>  Sat, 28 Sep 2013 10:08:25 +0200
+
 libepos2 (0.3-1~ppa2~precise1) precise; urgency=low
 
   * Add dependency to libftdipp1-dev in libepos2-dev.
