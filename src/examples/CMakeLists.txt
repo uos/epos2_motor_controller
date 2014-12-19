@@ -14,11 +14,6 @@ ADD_EXECUTABLE(configtest configtest.cpp)
 #		dependences
 TARGET_LINK_LIBRARIES(configtest epos2)
 #
-# TEST DELAYS
-#ADD_EXECUTABLE(test_delays test_delays.cpp)
-#   dependences
-#TARGET_LINK_LIBRARIES(test_delays epos2)
-#
 # TEST like h3d
 #ADD_EXECUTABLE(like_h3d test_like_h3d.cpp)
 #   dependences

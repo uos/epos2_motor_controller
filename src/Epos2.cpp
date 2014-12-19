@@ -229,11 +229,11 @@ void CEpos2::sendFrame(int16_t *frame)
 void CEpos2::receiveFrame(uint16_t* ans_frame)
 {
   // length variables
-  int read_desired         = 0;       // length of data that must read
-  int read_real            = 0;       // length of data read actually
-  int Len                  = 0;       // Len header part in epos2 usb frame
-  int read_point           = 0;       // Position of the data read
-  int state                = 0;       // state of the parsing state machine
+  uint16_t read_desired         = 0;       // length of data that must read
+  uint16_t read_real            = 0;       // length of data read actually
+  uint16_t Len                  = 0;       // Len header part in epos2 usb frame
+  uint16_t read_point           = 0;       // Position of the data read
+  uint16_t state                = 0;       // state of the parsing state machine
   bool packet_complete     = false;
 
   // data holders
@@ -258,13 +258,8 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
       throw EPOS2IOException("Impossible to read Status Word.\nIs the controller powered ?");
     }
 
-    // parsing data
-    //printf("%d%",read_real);
-
-    for(int i=0;i<read_real;i++)
+    for(uint16_t i=0;i<read_real;i++)
     {
-      //printf("%.2X.",read_buffer[i]);
-
       switch (state)
       {
         case 0:
@@ -341,30 +336,24 @@ void CEpos2::receiveFrame(uint16_t* ans_frame)
           break;
       }
     }
-    //printf(" - ");
 
     delete[] read_buffer;
 
   }while(!packet_complete);
 
-  //printf("\n");
 
   // parse data
-  //printf("AF = ");
   int tf_i = 0;
   for(int i = 0; i < Len; i++)
   {
     ans_frame[i] = 0x0000;
     // LSB to 0x__··
     ans_frame[i] = data[tf_i];
-    //printf("[ %.4X ] ",ans_frame[i]);
     tf_i++;
     // MSB to 0x··__
     ans_frame[i] = (data[tf_i]<<8) | ans_frame[i];
     tf_i++;
-    //printf("%.4X ",ans_frame[i]);
   }
-  //printf(" ");
 
   if(data!=NULL)
     delete[] data;
@@ -1209,7 +1198,7 @@ void CEpos2::getMovementInfo()
 {
 	long vel_actual,vel_avg,vel_demand;
 	int cur_actual,cur_avg,cur_demand;
-	long pos;
+	int32_t pos;
 	bool verbose_status;
 
   verbose_status = this->verbose;
@@ -1647,7 +1636,7 @@ long CEpos2::getHomePosition()
 void CEpos2::setHome()
 {
   char c;
-  long home_pos=0;
+  int32_t home_pos=0;
 
   long mode_anterior = this->getOperationMode();
   this->disableOperation();

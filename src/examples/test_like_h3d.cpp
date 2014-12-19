@@ -42,6 +42,7 @@ int main(void){
 	cout << "Epos2 Like H3D:" << endl;
 
   double avg=0,total_avg=0,max_avg=0,min_avg=0;
+  int total_seconds=20;//3*60;
 
 	try{
 
@@ -58,7 +59,7 @@ int main(void){
     // start the movement
     controller.startVelocity();
     CTime tbase,telapsed,t0,t1,tavg;
-    long pos=0;
+    int32_t pos=0;
     stringstream text;
     int k=0;
 
@@ -92,7 +93,7 @@ int main(void){
       }
       //usleep(100*1000);
 
-    }while( telapsed.getTimeInSeconds() < 3*60);
+    }while( telapsed.getTimeInSeconds() < total_seconds);
     
     cout << "End" << endl;
 
