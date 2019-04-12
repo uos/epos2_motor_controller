@@ -55,6 +55,8 @@ ADD_SUBDIRECTORY(src)
 
 ADD_CUSTOM_TARGET (distclean @echo cleaning cmake files)
 
+install(FILES package.xml DESTINATION share/libepos2)
+
 IF (UNIX)
   ADD_CUSTOM_COMMAND(
     COMMENT "distribution clean"
