@@ -26,7 +26,7 @@ IF(NOT DEFINED LIBEPOS2_CMAKE_CONFIG_DIR)
   SET( LIBEPOS2_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/libepos2)
 ENDIF()
 
-# PkgConfig
+
 SET(prefix      ${CMAKE_INSTALL_PREFIX})
 SET(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
 SET(includedir  ${CMAKE_INSTALL_PREFIX}/include/${PROJECT_NAME})
@@ -56,9 +56,6 @@ ADD_SUBDIRECTORY(src)
 ADD_CUSTOM_TARGET (distclean @echo cleaning cmake files)
 
 install(FILES package.xml DESTINATION share/libepos2)
-
-# install udev rule for accessing the ftdi device
-INSTALL(FILES doc/91-epos2.rules DESTINATION /etc/udev/rules.d)
 
 IF (UNIX)
   ADD_CUSTOM_COMMAND(
