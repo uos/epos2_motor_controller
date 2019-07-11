@@ -57,6 +57,9 @@ ADD_CUSTOM_TARGET (distclean @echo cleaning cmake files)
 
 install(FILES package.xml DESTINATION share/libepos2)
 
+# install udev rule for accessing the ftdi device
+INSTALL(FILES doc/91-epos2.rules DESTINATION /etc/udev/rules.d)
+
 IF (UNIX)
   ADD_CUSTOM_COMMAND(
     COMMENT "distribution clean"
