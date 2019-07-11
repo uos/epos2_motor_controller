@@ -8,6 +8,7 @@
   <author email="mmorta@iri.upc.edu">Martí Morta Garriga</author>
   <author email="jochen@sprickerhof.de">Jochen Sprickerhof</author>
 
+  <build_depend>libftdi-dev</build_depend>
   <build_depend>libftdipp-dev</build_depend>
   <buildtool_depend>cmake</buildtool_depend>
 
