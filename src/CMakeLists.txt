@@ -6,6 +6,10 @@ SET(headers Epos2.h)
 # locate the necessary dependencies
 FIND_PACKAGE(LibFTDI1 NO_MODULE REQUIRED)
 
+# fix for LIBFTDI_USE_FILE location in xenial and missing libftdipp1
+string(REGEX REPLACE "/usr//usr/" "/usr/" LIBFTDI_USE_FILE ${LIBFTDI_USE_FILE})
+list(APPEND LIBFTDIPP_LIBRARIES ${LIBFTDI_LIBARIES} ftdipp1)
+
 # add the necessary include directories
 INCLUDE_DIRECTORIES(.)
 INCLUDE(${LIBFTDI_USE_FILE})
