@@ -9,6 +9,18 @@ endif(COMMAND cmake_policy)
 
 # The project name and the type of project
 PROJECT(libepos2)
+
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+)
+
+catkin_package(
+ INCLUDE_DIRS src
+ LIBRARIES epos2
+ CATKIN_DEPENDS roscpp
+ DEPENDS libftdipp1-dev
+)
+
 SET(MAJOR_VERSION 0)
 SET(MINOR_VERSION 4)
 SET(VERSION_STRING ${MAJOR_VERSION}.${MINOR_VERSION})
@@ -25,7 +37,6 @@ ENDIF()
 IF(NOT DEFINED LIBEPOS2_CMAKE_CONFIG_DIR)
   SET( LIBEPOS2_CMAKE_CONFIG_DIR lib${LIB_SUFFIX}/cmake/libepos2)
 ENDIF()
-
 
 SET(prefix      ${CMAKE_INSTALL_PREFIX})
 SET(exec_prefix ${CMAKE_INSTALL_PREFIX}/bin)
