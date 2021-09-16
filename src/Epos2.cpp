@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cstdio>
 #include <sstream>
-#include "Epos2.h"
+#include "epos2_motor_controller/Epos2.h"
 //#define DEBUG
 
 // ----------------------------------------------------------------------------
@@ -1214,7 +1214,7 @@ void CEpos2::getMovementInfo()
   pos        = this->readPosition();
   this->setVerbose(verbose_status);
 
-	printf("\r    [EPOS2] p: %ld v: %ld vavg: %ld vd: %ld c: %d cavg: %d cd: %d                   ",pos,vel_actual,vel_avg,vel_demand,cur_actual,cur_avg,cur_demand);
+	printf("\r    [EPOS2] p: %d v: %ld vavg: %ld vd: %ld c: %d cavg: %d cd: %d                   ",pos,vel_actual,vel_avg,vel_demand,cur_actual,cur_avg,cur_demand);
 		fflush(stdout);
 
 }
