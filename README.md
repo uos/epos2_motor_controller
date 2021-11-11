@@ -6,6 +6,6 @@ Revised version of [epos2_motor_controller](https://github.com/uos/epos2_motor_c
 
 FTDI
 
-```bash
+```console
 user@pc:~$ sudo apt-get install libftdipp1-dev
 ```
