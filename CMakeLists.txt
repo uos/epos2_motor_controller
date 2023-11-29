@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2)
-project(epos2_motor_controller)
+project(epos2_motor_controller VERSION 1.0.2)
 
 if (NOT EXISTS ${CMAKE_BINARY_DIR}/CMakeCache.txt)
   if (NOT CMAKE_BUILD_TYPE)
