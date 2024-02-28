@@ -1,6 +1,6 @@
 # EPOS2 Motor Controller
 
-Revised version of [epos2_motor_controller](https://github.com/uos/epos2_motor_controller). Works with ROS-noetic.
+Revised version of [epos2_motor_controller](https://github.com/uos/epos2_motor_controller). Works with ROS2-humble.
 
 ## Dependencies
 
@@ -10,7 +10,13 @@ FTDI
 user@pc:~$ sudo apt-get install libftdipp1-dev
 ```
 
+Copy the udev rules file to your udev rules folder:
 
+```console
+sudo cp udev/91-epos2.rules /etc/udev/rules.d/.
+```
+
+Make sure that your current user is a member of the `dialout` group by running groups. If not, add the user to the group and login again.
 
 
 ## License
