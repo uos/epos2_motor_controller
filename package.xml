@@ -8,6 +8,7 @@
   <license>LGPL</license>
   <author email="mmorta@iri.upc.edu">Martí Morta Garriga</author>
   <author email="jochen@sprickerhof.de">Jochen Sprickerhof</author>
+  <author email="amock@uos.de">Alexander Mock</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>libftdipp1-dev</build_depend>
