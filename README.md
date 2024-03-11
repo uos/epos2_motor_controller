@@ -18,7 +18,6 @@ sudo cp udev/91-epos2.rules /etc/udev/rules.d/.
 
 Make sure that your current user is a member of the `dialout` group by running groups. If not, add the user to the group and login again.
 
-
 ## License
 
 Copyright (C) 2009-2010 Institut de Robòtica i Informàtica Industrial, CSIC-UPC.
